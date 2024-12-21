@@ -12,3 +12,7 @@ It is a member of the halogen group and is found in Group 17 (VIIA) of the perio
 Bromine (Br) sits directly next to Selenium (Se) in the periodic table.
 
 
+
+### Still under development...
+
+
