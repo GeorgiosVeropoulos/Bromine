@@ -9,20 +9,35 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 // Check this https://github.com/GoogleChromeLabs/chrome-for-testing
 public class UpdateChromeDriverHelper extends UpdateDriverHelper{
 
-    private static final URL chromdriverExe = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver.exe");
+    private static final URL chromedriverResource;
+    static {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver.exe");
+        } else if (System.getProperty("os.name").toLowerCase().contains("nix") || System.getProperty("os.name").toLowerCase().contains("nux")) {
+            chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver");
+        } else {
+            throw new UnsupportedOperationException("Unsupported OS for ChromeDriver");
+        }
+    }
+
     private static final String CHROMEDRIVER_URL = "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/";
     private static final String LAST_KNOWN_GOOD_VERSIONS_URL = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json";
+
     public static void checkChromeVersionIsUpdated() {
         String version = fetchLastKnownGoodVersion(LAST_KNOWN_GOOD_VERSIONS_URL, "Stable");
         String chromeDriver = getChromedriverVersion();
         String installedChromeVersion = getInstalledChromeVersion();
-        if (!chromeDriver.equals(installedChromeVersion) && version.contains(installedChromeVersion)) {
+        boolean b = !installedChromeVersion.substring(0,3).equals(chromeDriver);
+        if (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion)) {
             updateChromedriver(version);
         }
     }
@@ -73,10 +88,10 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
         // Command to get Chromedriver version
         Process process;
         try {
-            if (chromdriverExe == null) {
+            if (chromedriverResource == null) {
                 return "0";
             }
-            process = Runtime.getRuntime().exec(new File(chromdriverExe.toURI()).getAbsolutePath() + " --version");
+            process = Runtime.getRuntime().exec(new File(chromedriverResource.toURI()).getAbsolutePath() + " --version");
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -99,7 +114,7 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
             } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
                 String command = os.contains("mac") ?
                         "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version" :
-                        "google-chrome --version";
+                        "/opt/google/chrome/google-chrome --version";
                 process = Runtime.getRuntime().exec(command);
             } else {
                 throw new UnsupportedOperationException("Unsupported OS");
@@ -108,8 +123,17 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
             Scanner scanner = new Scanner(process.getInputStream());
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
-                if (line.contains("version")) {
-                    version = line.split("\\s+")[line.split("\\s+").length - 1].split("\\.")[0]; // Get major version
+                if (os.contains("win") && line.contains("version")) {
+                    // Windows: Get the major version
+                    version = line.split("\\s+")[line.split("\\s+").length - 1].split("\\.")[0];
+                } else if ((os.contains("nix") || os.contains("nux") || os.contains("mac")) && line.toLowerCase().contains("chrome")) {
+                    // Linux/macOS: Extract the first three numbers
+                    version = line.replaceAll("[^\\d.]", "").trim(); // Remove non-numeric characters
+                    String[] parts = version.split("\\.");
+                    if (parts.length >= 3) {
+                        version = parts[0] + "." + parts[1] + "." + parts[2];
+                    }
+                    break;
                 }
             }
         } catch (IOException e) {
@@ -125,24 +149,68 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
 
 
     private static void updateChromedriver(String chromeVersion) {
+        String os = System.getProperty("os.name").toLowerCase();
+        String platform = "";
+        String driverFileName = "";
+
+        // Determine the platform and file name based on OS
+        if (os.contains("win")) {
+            platform = "win64";
+            driverFileName = "chromedriver.exe";
+        } else if (os.contains("mac")) {
+            platform = "mac64";
+            driverFileName = "chromedriver";
+        } else if (os.contains("nix") || os.contains("nux")) {
+            platform = "linux64";
+            driverFileName = "chromedriver";
+        } else {
+            throw new UnsupportedOperationException("Unsupported OS for ChromeDriver update");
+        }
+
         // Form the URL for downloading the specific ChromeDriver version
-        String downloadUrl = CHROMEDRIVER_URL + chromeVersion + "/win64/chromedriver-win64.zip";
-        // Download Chromedriver zip file
+        String downloadUrl = CHROMEDRIVER_URL + chromeVersion + "/" + platform + "/chromedriver-" + platform + ".zip";
         Path zipFilePath = DRIVERS_PACKAGE.resolve("chromedriver.zip");
 
         // Step 1: Download the zip file
         downloadFile(downloadUrl, zipFilePath);
-        // Step 2: Wait until the download completes (already ensured by blocking call above)
-        // Step 3: Unzip and replace chromedriver.exe
-        unzip(zipFilePath, DRIVERS_PACKAGE, "chromedriver.exe");
-        // Step 4: Delete the zip file
+
+        // Step 2: Unzip and replace the ChromeDriver binary
+        unzip(zipFilePath, DRIVERS_PACKAGE, driverFileName);
+
+        // Step 3: Set the executable permission for the binary
+        setExecutablePermission(DRIVERS_PACKAGE.resolve(driverFileName));
+
+        // Step 4: Delete the zip file after unzipping
         try {
             Files.deleteIfExists(zipFilePath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to delete zip file: " + zipFilePath, e);
         }
+
         System.out.println("Chromedriver updated successfully.");
     }
+
+    /**
+     * Set executable permissions for the file based on the OS.
+     */
+    private static void setExecutablePermission(Path filePath) {
+        try {
+            if (System.getProperty("os.name").toLowerCase().contains("nix") || System.getProperty("os.name").toLowerCase().contains("nux")) {
+                // Linux or macOS: Set the executable permission
+                Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxr-xr-x");
+                Files.setPosixFilePermissions(filePath, permissions);
+            } else {
+                // Windows: No additional permissions needed
+                System.out.println("No additional permissions set for Windows.");
+            }
+        } catch (UnsupportedOperationException e) {
+            // If the OS doesn't support PosixFilePermissions (Windows or some other OS)
+            System.out.println("Unsupported operation for setting permissions.");
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to set executable permission for " + filePath, e);
+        }
+    }
+
 
 
 

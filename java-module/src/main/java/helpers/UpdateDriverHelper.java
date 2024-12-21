@@ -58,32 +58,26 @@ public class UpdateDriverHelper {
 
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
-                // Only process chromedriver.exe (ignoring folder paths)
-                if (entry.getName().contains(fullNameofDriverExe)) {
-                    // Extract only the file name from the entry
-                    Path newFile = target.resolve(Paths.get(entry.getName()).getFileName().toString());
+                // Extract entry to target path
+                Path newFile = target.resolve(Paths.get(entry.getName()).getFileName());
 
-                    // Check if the file exists
-                    if (Files.exists(newFile)) {
-                        System.out.println(fullNameofDriverExe + " already exists and will be replaced: " + newFile);
-                        Files.copy(zis, newFile, StandardCopyOption.REPLACE_EXISTING);
-                    } else {
-                        System.out.println("Extracting " + fullNameofDriverExe + ": " + newFile);
-                        Files.copy(zis, newFile);
-                    }
-
-                    // Close the current zip entry
-                    zis.closeEntry();
-
-                    // Break once chromedriver.exe is processed
-                    break;
+                if (entry.isDirectory()) {
+                    // Create directory
+                    Files.createDirectories(newFile);
+                } else {
+                    // Extract file
+                    Files.copy(zis, newFile, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Extracted: " + newFile);
                 }
+
+                // Close the current zip entry
+                zis.closeEntry();
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Zip file not found: " + source, e);
         } catch (IOException e) {
             throw new RuntimeException("Error while extracting " + fullNameofDriverExe, e);
         }
-
     }
+
 }

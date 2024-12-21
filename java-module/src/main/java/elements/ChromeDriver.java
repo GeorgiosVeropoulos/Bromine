@@ -7,6 +7,7 @@ import helpers.UpdateChromeDriverHelper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
@@ -50,12 +51,31 @@ public class ChromeDriver extends WebDriver {
     private static synchronized void startChromeProcess() {
 
         if (process == null || !process.isAlive()) {
-            String chromedriverPath = DriverClient.class.getClassLoader().getResource("drivers/chromedriver.exe").getPath();
-            if (chromedriverPath.startsWith("/")) {
+            String resourcePath;
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                resourcePath = "drivers/chromedriver.exe";
+            } else if (System.getProperty("os.name").toLowerCase().contains("nix") || System.getProperty("os.name").toLowerCase().contains("nux")) {
+                resourcePath = "drivers/chromedriver"; // On Linux or macOS, use the plain executable
+            } else {
+                throw new UnsupportedOperationException("Unsupported OS for ChromeDriver initialization");
+            }
+
+            // Get the resource URL
+            URL url = DriverClient.class.getClassLoader().getResource(resourcePath);
+            if (url == null) {
+                throw new RuntimeException("Resource not found: " + resourcePath);
+            }
+
+            // Get the path from the URL
+            String chromedriverPath = url.getPath();
+
+            // Adjust path for Windows if necessary
+            if (chromedriverPath.startsWith("/") && System.getProperty("os.name").toLowerCase().contains("win")) {
                 chromedriverPath = chromedriverPath.substring(1); // Remove leading slash for Windows
             }
-            String url = Configuration.getGridUrl();
-            String port = url.substring(url.lastIndexOf(':') + 1);
+
+            String urlString = Configuration.getGridUrl();
+            String port = urlString.substring(urlString.lastIndexOf(':') + 1);
             ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath, "--port=" + port);
 
             try {
@@ -64,9 +84,12 @@ public class ChromeDriver extends WebDriver {
                 throw new RuntimeException("Failed to start ChromeDriver", e);
             }
         }
+
         if (process.isAlive()) {
             System.out.println("Chrome process was alive");
         }
+
+
     }
 
 
