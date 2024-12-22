@@ -2,7 +2,7 @@ package elements;
 
 
 /**
- *
+ * A handy way to interact with Select tag elements
  */
 public class Select {
 

@@ -10,7 +10,7 @@ package exceptions;
  *     <li>WebElement was removed from the current DOM</li>
  * </ul>
  */
-public class StaleElementReferenceException extends RuntimeException {
+public class StaleElementReferenceException extends WebDriverException {
 
 
     public StaleElementReferenceException(String s) {

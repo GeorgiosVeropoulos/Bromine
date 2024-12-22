@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static Constants.Constants.TWO_SECONDS;
+import static elements.EndPoints.buildEndpoint;
 import static elements.HttpMethodExecutor.*;
 
 
@@ -57,23 +58,23 @@ abstract class DriverClient {
     }
 
     protected static void openURL(String url) {
-        doPostRequest("/url", new JsonBuilder().addKeyValue("url", url).build());
+        doPostRequest(EndPoints.URL, new JsonBuilder().addKeyValue("url", url).build());
     }
 
     protected static void maximize() {
-        doPostRequest("/window/maximize", "{}");
+        doPostRequest(EndPoints.MAXIMIZE_WINDOW, "{}");
     }
 
     protected static void fullscreen() {
-        doPostRequest("/window/fullscreen", "{}");
+        doPostRequest(EndPoints.FULLSCREEN_WINDOW, "{}");
     }
 
     protected static void minimize() {
-        doPostRequest("/window/minimize", "{}");
+        doPostRequest(EndPoints.MINIMIZE_WINDOW, "{}");
     }
 
     protected static String getUrl() {
-        return (String) doGetRequest("/url").get("value");
+        return (String) doGetRequest(EndPoints.URL).get("value");
     }
 
     // Close the browser session
@@ -88,7 +89,7 @@ abstract class DriverClient {
 
     protected static SearchContext getElement(Locator locator) {
         String jsonToSend =  new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build();
-        Response response = doPostRequest("/element", jsonToSend);
+        Response response = doPostRequest(EndPoints.FIND_ELEMENT , jsonToSend);
         HandleExceptions.handleResponse(response, "Element Not found using: " + locator.toString());
         return new SearchContext(Collections.unmodifiableMap(response.getValueAsMap()));
     }
@@ -96,7 +97,7 @@ abstract class DriverClient {
 
     protected static List<WebElement> getElements(Locator locator) {
         String jsonToSend = new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build();
-        Map<String, Object> json = doPostRequest("/elements", jsonToSend);
+        Map<String, Object> json = doPostRequest(EndPoints.FIND_ELEMENTS, jsonToSend);
          ArrayList<HashMap<String, String>> valueMap = (ArrayList<HashMap<String, String>>) json.get("value");
 
         List<WebElement> elements = new ArrayList<>(); // Temporary list to store fetched elements
@@ -107,7 +108,7 @@ abstract class DriverClient {
     }
 
     protected static SearchContext getElementWithin(String parentId, Locator locator) {
-        String endPoint = "/element/" + parentId + "/element";
+        String endPoint = buildEndpoint(EndPoints.FIND_ELEMENT_FROM_ELEMENT, parentId);
         Response response = doPostRequest(endPoint, new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build());
         HandleExceptions.handleResponse(response, "Could not find element: " + locator.toString());
         return new SearchContext(response.getValueAsMap());
@@ -115,7 +116,7 @@ abstract class DriverClient {
 
     // Retrieves multiple child elements within a parent element's context
     protected static List<WebElement> getElementsWithin(String parentId, Locator locator) {
-        String endPoint = "/element/" + parentId + "/elements";
+        String endPoint = buildEndpoint(EndPoints.FIND_ELEMENTS_FROM_ELEMENT, parentId);
         Response response = doPostRequest(endPoint, new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build());
         // Parse the response to get element IDs
         ArrayList<Map<String, String>> valueMap = (ArrayList<Map<String, String>>) response.get("value");
@@ -135,52 +136,52 @@ abstract class DriverClient {
 
     protected static void setImplicitWait(Duration duration) {
         String jsonToSend = new JsonBuilder().addKeyValue("implicit", duration.toMillis()).build();
-        doPostRequest("/timeouts", jsonToSend);
+        doPostRequest(EndPoints.TIMEOUTS, jsonToSend);
     }
 
     protected static Duration getImplicitWait() {
-        Map<String, Object> json = doGetRequest("/timeouts");
+        Map<String, Object> json = doGetRequest(EndPoints.TIMEOUTS);
         Object result = JsonParser.findValueByKey(json, "implicit");
         return result instanceof Integer ? Duration.ofMillis((int) result) : Duration.ZERO;
     }
 
     protected static void setScriptWait(Duration duration) {
         String jsonToSend = new JsonBuilder().addKeyValue("script", duration.toMillis()).build();
-        doPostRequest("/timeouts", jsonToSend);
+        doPostRequest(EndPoints.TIMEOUTS, jsonToSend);
     }
 
     protected static Duration getScriptWait() {
-        Map<String, Object> json = doGetRequest("/timeouts");
+        Map<String, Object> json = doGetRequest(EndPoints.TIMEOUTS);
         Object result = JsonParser.findValueByKey(json, "script");
         return result instanceof Integer ? Duration.ofMillis((int) result) : Duration.ZERO;
     }
 
     protected static void setPageLoad(Duration duration) {
         String jsonToSend = new JsonBuilder().addKeyValue("pageLoad", duration.toMillis()).build();
-        doPostRequest("/timeouts", jsonToSend);
+        doPostRequest(EndPoints.TIMEOUTS, jsonToSend);
     }
 
     protected static Duration getPageLoad() {
-        Map<String, Object> json = doGetRequest("/timeouts");
+        Map<String, Object> json = doGetRequest(EndPoints.TIMEOUTS);
         Object result = JsonParser.findValueByKey(json, "pageLoad");
         return result instanceof Integer ? Duration.ofMillis((int) result) : Duration.ZERO;
     }
 
 
     protected static void back() {
-        doPostRequest("/back", "{}");
+        doPostRequest(EndPoints.BACK, "{}");
     }
 
     protected static void forward() {
-        doPostRequest("/forward", "{}");
+        doPostRequest(EndPoints.FORWARD, "{}");
     }
 
     protected static void refresh() {
-        doPostRequest("/refresh", "{}");
+        doPostRequest(EndPoints.REFRESH, "{}");
     }
 
     protected static String title() {
-        Map<String, Object> json = doGetRequest("/title");
+        Map<String, Object> json = doGetRequest(EndPoints.GET_TITLE);
         return (String) JsonParser.findValueByKey(json, "value");
     }
 
@@ -188,7 +189,7 @@ abstract class DriverClient {
     protected static class Contexts {
 
         protected static String getWindowHandle() {
-            Map<String, Object> json = doGetRequest("/window");
+            Map<String, Object> json = doGetRequest(EndPoints.GET_WINDOW_HANDLE);
             Object valueContent = JsonParser.findValueByKey(json, "value");
             if (valueContent instanceof String) {
                 return (String) valueContent;
@@ -202,7 +203,7 @@ abstract class DriverClient {
         protected static void closeWindow() {
 
             boolean lastWindow = getWindowHandles().size() == 1;
-            doDeleteRequest("/window");
+            doDeleteRequest(EndPoints.GET_WINDOW_HANDLE);
             if (lastWindow) {
                 SESSION_IDS.remove();
             } else {
@@ -219,13 +220,13 @@ abstract class DriverClient {
          * @throws NoSuchWindowException if no window is found with the specified handle.
          */
         protected static void switchToWindow(String handle) {
-            Response response = doPostRequest("/window",  new JsonBuilder().addKeyValue("handle", handle).build());
+            Response response = doPostRequest(EndPoints.GET_WINDOW_HANDLE,  new JsonBuilder().addKeyValue("handle", handle).build());
             String m  = (String) JsonParser.findValueByKey(response, "message");
             HandleExceptions.handleResponse(response, "Window with handle: " + handle + " wasn't found!");
         }
 
         protected static Set<String> getWindowHandles() {
-            Map<String, Object> json = doGetRequest("/window/handles");
+            Map<String, Object> json = doGetRequest(EndPoints.GET_WINDOW_HANDLES);
             Object handles = Objects.requireNonNull(JsonParser.findValueByKey(json, "value"));
             if (!(handles instanceof ArrayList<?>)) {
                 return new HashSet<>();
@@ -234,7 +235,7 @@ abstract class DriverClient {
         }
 
         protected static void newWindow() {
-            String handle = doPostRequest("/window/new", new JsonBuilder().addKeyValue("type", "window").build()).getValueAsMap().get("handle");
+            String handle = doPostRequest(EndPoints.NEW_WINDOW, new JsonBuilder().addKeyValue("type", "window").build()).getValueAsMap().get("handle");
             switchToWindow(handle);
         }
 
@@ -246,7 +247,7 @@ abstract class DriverClient {
         protected static void newTab() {
             Set<String> beforeHandles = getWindowHandles();
             if (beforeHandles.size() != 1) {
-                doPostRequest("/window/new", new JsonBuilder().addKeyValue("type", "tab").build());
+                doPostRequest(EndPoints.NEW_WINDOW, new JsonBuilder().addKeyValue("type", "tab").build());
                 return;
             }
             JsonBuilder json = new JsonBuilder().addKeyValue("script", "window.open('', '_blank');");
@@ -262,7 +263,7 @@ abstract class DriverClient {
 
 
         protected static void switchToDefaultContent() {
-            doPostRequest("/frame", new JsonBuilder().addKeyValue("id", null).build());
+            doPostRequest(EndPoints.SWITCH_TO_FRAME, new JsonBuilder().addKeyValue("id", null).build());
         }
 
         protected static void switchToFrame(WebElement element) {
@@ -271,7 +272,7 @@ abstract class DriverClient {
                 SearchContext searchContext = DriverClient.getElement(locator);
 //                String key = searchContext.elementId.keySet().iterator().next();
                 String json = String.format("{\"id\": {\"%s\": \"%s\"}}", searchContext.elementName(), searchContext.elementId());
-                Response response = doPostRequest("/frame", json);
+                Response response = doPostRequest(EndPoints.SWITCH_TO_FRAME, json);
                 response.getString("value");
             } catch (NoSuchElementException e) {
                 System.out.println("Throwing NoSuchFrameException");
@@ -285,7 +286,7 @@ abstract class DriverClient {
          * @throws NoSuchFrameException will be thrown when frame with index can't be found.
          */
         protected static void switchToFrame(Number index) {
-            Response response = doPostRequest("/frame", new JsonBuilder().addKeyValue("id", index).build());
+            Response response = doPostRequest(EndPoints.SWITCH_TO_FRAME, new JsonBuilder().addKeyValue("id", index).build());
             HandleExceptions.handleResponse(response, "Frame with index: " + index + " was not found!");
         }
 

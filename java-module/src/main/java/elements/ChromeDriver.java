@@ -3,7 +3,7 @@ package elements;
 import annotations.AffectedBy;
 import capabilities.BrowserType;
 import capabilities.Configuration;
-import helpers.UpdateChromeDriverHelper;
+import drivermanagers.UpdateChromeDriverHelper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;

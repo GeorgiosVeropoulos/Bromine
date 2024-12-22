@@ -32,7 +32,7 @@ public class SelectTagTest extends TestBase {
         boolean isVisible = new Wait().forResult(ExpectedResult.isVisible(select));
         System.out.println(loginBtn.getLocator().toString());
         WebElements options = new Select(select).getOptions();
-        System.out.println("Options size is " + options.get(0).getLocator());
+        System.out.println("Options size is " + options.size());
 //        new Select(select).click();
 //        String firstText = new Select(select).getLastChild().getText();
 //        System.out.println("First text is: " + firstText);

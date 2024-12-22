@@ -1,6 +1,6 @@
 package exceptions;
 
-public class ElementClickInterceptedException extends RuntimeException {
+public class ElementClickInterceptedException extends WebDriverException {
 
 
     public ElementClickInterceptedException(String s) {

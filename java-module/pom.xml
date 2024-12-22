@@ -4,9 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.automation.bromine.web</groupId>
-    <artifactId>Bromine</artifactId>
+    <artifactId>java-module</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.automation.bromine.web</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -16,6 +23,11 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.automation.bromine.web</groupId>
+            <artifactId>fileshelpers</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

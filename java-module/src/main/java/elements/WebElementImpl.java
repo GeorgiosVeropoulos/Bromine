@@ -22,21 +22,21 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public void click() {
-        String endPoint = "/element/" + searchContext.elementId() + "/click";
+        String endPoint = buildEndpoint(EndPoints.ELEMENT_CLICK, searchContext.elementId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, "{}");
         HandleExceptions.handleResponse(response, "Element was intercepted using: " + getLocator().getUsing() + " value: " + getLocator().getValue());
     }
 
     @Override
     public void clear() {
-        String endPoint = "/element/" + searchContext.elementId() + "/clear";
+        String endPoint = buildEndpoint(EndPoints.ELEMENT_CLEAR, searchContext.elementId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, "{}");
         HandleExceptions.handleResponse(response, "Element wasn't able to be cleared!");
     }
 
     @Override
     public void sendKeys(String text) {
-        String endPoint = "/element/" + searchContext.elementId() + "/value";
+        String endPoint = buildEndpoint(EndPoints.ELEMENT_SEND_KEYS, searchContext.elementId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, new JsonBuilder().addKeyValue("text", text).build());
         HandleExceptions.handleResponse(response, "Send keys issue");
     }
@@ -48,14 +48,14 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public String getTagName() {
-        Response response = HttpMethodExecutor.doGetRequest("/element/" + searchContext.elementId() + "/name");
+        Response response = HttpMethodExecutor.doGetRequest(buildEndpoint(EndPoints.GET_ELEMENT_TAG_NAME, searchContext.elementId()));
         HandleExceptions.handleResponse(response,  "Issue detected trying to fetch getTagName for WebElement: " + locator.toString());
         return (String) JsonParser.findValueByKey(response, "value");
     }
 
     @Override
     public String getAttribute(String attributeName) {
-        String endPoint = String.format(EndPoints.ELEMENT_ATTRIBUTE, searchContext.elementId(), attributeName);
+        String endPoint = buildEndpoint(EndPoints.ELEMENT_ATTRIBUTE, searchContext.elementId(), attributeName);
         return HttpMethodExecutor.doGetRequest(endPoint).getString("value");
     }
 

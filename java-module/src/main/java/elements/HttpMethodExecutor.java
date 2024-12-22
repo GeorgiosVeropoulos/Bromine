@@ -2,6 +2,7 @@ package elements;
 
 import capabilities.Configuration;
 import enums.HttpMethod;
+import exceptions.WebDriverException;
 import json.JsonBuilder;
 
 import java.io.BufferedReader;
@@ -23,9 +24,7 @@ public class HttpMethodExecutor {
         try {
             return doRequest(HttpMethod.POST, "/session", bodyToSend);
         } catch (IOException e) {
-//            System.out.println("Exception found when trying to execute Post Request\n" +
-//                    "End point: "+ "/session" + "\n" +
-//                    "with body: " + bodyToSend + "\n" + e.getMessage());
+            //do nothing for now.
         }
         return new Response("{}");
     }
