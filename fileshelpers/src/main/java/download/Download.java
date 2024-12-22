@@ -1,5 +1,7 @@
 package download;
 
+import exceptions.FailedToDownloadDriverException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,12 +16,12 @@ public class Download {
 
 
     public static void file(String urlString, Path targetPath) {
-        log.info("Downloading chromedriver from: " + urlString);
+        log.fine("Downloading chromedriver from: " + urlString);
         try (InputStream in = new URL(urlString).openStream()) {
             Files.copy(in, targetPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FailedToDownloadDriverException(e);
         }
-        log.info("download.Download completed: " + targetPath);
+        log.fine("Download completed: " + targetPath);
     }
 }

@@ -1,11 +1,13 @@
 package elements;
 
 
+
+import lombok.extern.slf4j.Slf4j;
+
 import javax.annotation.WillClose;
 import javax.annotation.concurrent.ThreadSafe;
 import java.time.Duration;
 import java.util.Set;
-import java.util.logging.Logger;
 
 // UNDER DESIGN
 
@@ -17,7 +19,6 @@ import java.util.logging.Logger;
 public abstract class WebDriver {
 
     protected static final String os = System.getProperty("os.name").toLowerCase();
-    protected static final Logger logger = Logger.getLogger(WebDriver.class.getName());
     protected static Process process;
 
 
@@ -27,6 +28,7 @@ public abstract class WebDriver {
 
     protected static void runAndShutDownDriver(Runnable createProcess) {
         createProcess.run();
+
         // Register a shutdown hook to clean up the process when JVM exits
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (process != null && process.isAlive()) {

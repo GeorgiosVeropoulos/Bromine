@@ -1,11 +1,13 @@
 package client;
 
 import elements.*;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import testbase.TestBase;
 
 import static elements.WebElementsFactory.$;
 
+@Slf4j
 public class SelectTagTest extends TestBase {
 
 
@@ -32,6 +34,7 @@ public class SelectTagTest extends TestBase {
         boolean isVisible = new Wait().forResult(ExpectedResult.isVisible(select));
         System.out.println(loginBtn.getLocator().toString());
         WebElements options = new Select(select).getOptions();
+        log.info("Testing info message");
         System.out.println("Options size is " + options.size());
 //        new Select(select).click();
 //        String firstText = new Select(select).getLastChild().getText();

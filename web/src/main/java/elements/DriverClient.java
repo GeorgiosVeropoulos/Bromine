@@ -35,7 +35,7 @@ abstract class DriverClient {
 
     // Start a browser session
     protected static void startSession() {
-        Response response = START(Configuration.jsonConfig);
+        Response response = START(Configuration.getJsonConfig());
         String sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
         if (sessionID != null) {
             SESSION_IDS.set(sessionID);
@@ -43,7 +43,7 @@ abstract class DriverClient {
         }
         for (int i=0; i < 5; i++) {
             Sleeper.sleep(TWO_SECONDS);
-            response = START(Configuration.jsonConfig);
+            response = START(Configuration.getJsonConfig());
             sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
             if (sessionID != null) {
                 break;

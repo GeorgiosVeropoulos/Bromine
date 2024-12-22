@@ -4,6 +4,7 @@ import annotations.AffectedBy;
 import capabilities.BrowserType;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
 @AffectedBy(clazz = UpdateChromeDriverHelper.class)
+@Slf4j
 public class ChromeDriver extends WebDriver {
 
     protected static final ConcurrentHashMap<Long, String> map = new ConcurrentHashMap<>();
@@ -35,14 +37,16 @@ public class ChromeDriver extends WebDriver {
     // Constructor: start session only if Chrome is selected
     public ChromeDriver() {
         if (!Configuration.getJsonConfig().contains("chrome")) {
-            throw new UnsupportedOperationException("ChromeDriver cannot be initialized. Chrome is not the selected browser.\n" +
-                    "Make sure you have selected Chrome in the Configuration Browser Type, your capabilities also match and chromedriver.exe exists in your resources package!");
+            throw new UnsupportedOperationException("ChromeDriver couldn't be created. Make sure your " +
+                    "jsonConfig contains correct structure for Chrome.");
         }
-        if (isChromeSelected()) {
-            // Start a new session for each ChromeDriver instance
-            DriverClient.startSession();
-            map.put(Thread.currentThread().getId(), DriverClient.sessionId());
+        if (!isChromeSelected()) {
+            throw new IllegalArgumentException("Tried to create a Chrome Browser when the BrowserType selected was: "
+            + Configuration.getBrowserType().name());
         }
+        // Start a new session for each ChromeDriver instance
+        DriverClient.startSession();
+        map.put(Thread.currentThread().getId(), DriverClient.sessionId());
         set(this);
     }
 
@@ -86,7 +90,7 @@ public class ChromeDriver extends WebDriver {
         }
 
         if (process.isAlive()) {
-            System.out.println("Chrome process was alive");
+            log.debug("Chrome process was alive");
         }
 
 

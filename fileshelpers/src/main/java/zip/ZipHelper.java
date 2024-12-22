@@ -1,5 +1,7 @@
 package zip;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,13 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+@Slf4j
 public class ZipHelper {
 
-    private static final Logger log = Logger.getLogger(ZipHelper.class.getName());
 
     public static void unzip(Path source, Path target, String fileName) {
         try (FileInputStream fis = new FileInputStream(source.toFile());
@@ -30,7 +31,7 @@ public class ZipHelper {
                 } else {
                     // Extract file
                     Files.copy(zis, newFile, StandardCopyOption.REPLACE_EXISTING);
-                    log.info("Extracted: " + newFile);
+                    log.info("Extracted: {}", newFile);
                 }
 
                 // Close the current zip entry
