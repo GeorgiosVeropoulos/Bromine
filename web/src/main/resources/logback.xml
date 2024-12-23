@@ -1,4 +1,4 @@
-<configuration>
+<configuration debug="false">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -9,7 +9,4 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="elements.ChromeDriver" level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
 </configuration>

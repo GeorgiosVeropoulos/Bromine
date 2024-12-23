@@ -2,7 +2,6 @@ package elements;
 
 import capabilities.Configuration;
 import enums.HttpMethod;
-import exceptions.WebDriverException;
 import json.JsonBuilder;
 
 import java.io.BufferedReader;
@@ -51,7 +50,7 @@ public class HttpMethodExecutor {
 
     protected static String doDeleteRequest(String endPoint) {
         try {
-            URL url = new URL(Configuration.getGridUrl() + "/session/" + DriverClient.sessionId() + endPoint);
+            URL url = new URL(Configuration.getDriverUrl() + "/session/" + DriverClient.sessionId() + endPoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(HttpMethod.DELETE.getMethod());
 
@@ -80,7 +79,7 @@ public class HttpMethodExecutor {
      */
     private static Response doRequest(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException{
 
-        URL url = new URL(Configuration.getGridUrl()  + endPoint);
+        URL url = new URL(Configuration.getDriverUrl()  + endPoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod.getMethod());
         connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");

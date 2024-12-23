@@ -5,23 +5,16 @@ import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import capabilities.FireFoxCapabilities;
 import elements.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import sleeper.Sleeper;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
-import static Constants.Constants.TWO_SECONDS;
 
 /**
  * Base class all Tests should extend.
@@ -35,11 +28,13 @@ protected static final String DRIVER_URL = "http://localhost:51325";
     public TestBase() {
         String json = chromeCapabilities();
 //        String json = firefoxCapabilities();
-        Configuration.setGridUrl(DRIVER_URL);
+        Configuration.setDriverUrl(DRIVER_URL);
         Configuration.setBrowserType(BrowserType.CHROME);
         Configuration.setJsonConfig(json);
-//        ScreenShot.config.setImageFormat("png");
-        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots").toString());
+
+//        Configuration.setDriverPath(Path.of(System.getProperty("user.dir"),"/src/main/resources"));
+//        ScreenShot.config.setImageFormat("png");%
+        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots"));
 
     }
 
@@ -52,7 +47,7 @@ protected static final String DRIVER_URL = "http://localhost:51325";
         //        Sleeper.sleep(TWO_SECONDS);
 
         WebDriver.get().window().maximize();
-        WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(20));
+        WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(5));
         WebDriver.get().timeouts().set().pageLoad(Duration.ofSeconds(20));
         WebDriver.get().timeouts().set().scriptWait(Duration.ofSeconds(20));
 
@@ -66,7 +61,9 @@ protected static final String DRIVER_URL = "http://localhost:51325";
 
     @AfterEach
     public void afterEach() throws IOException {
-        WebDriver.get().quit();
+        if (WebDriver.get() != null) {
+            WebDriver.get().quit();
+        }
 //        DriverClient.closeSession();
     }
 

@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
@@ -16,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ChromeDriver extends WebDriver {
 
+//    private static final Logger log = LoggerFactory.getLogger(ChromeDriver.class);
     protected static final ConcurrentHashMap<Long, String> map = new ConcurrentHashMap<>();
 
 
@@ -26,6 +29,7 @@ public class ChromeDriver extends WebDriver {
             UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
             runAndShutDownDriver(ChromeDriver::startChromeProcess);
         }
+
     }
 
     // Method to check if Chrome is the selected browser
@@ -44,6 +48,9 @@ public class ChromeDriver extends WebDriver {
             throw new IllegalArgumentException("Tried to create a Chrome Browser when the BrowserType selected was: "
             + Configuration.getBrowserType().name());
         }
+
+//        UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
+//        runAndShutDownDriver(ChromeDriver::startChromeProcess);
         // Start a new session for each ChromeDriver instance
         DriverClient.startSession();
         map.put(Thread.currentThread().getId(), DriverClient.sessionId());
@@ -56,29 +63,41 @@ public class ChromeDriver extends WebDriver {
 
         if (process == null || !process.isAlive()) {
             String resourcePath;
+
+            String path = Configuration.getDriverPath() != null ? String.valueOf(Configuration.getDriverPath()) : "drivers";
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                resourcePath = "drivers/chromedriver.exe";
+                resourcePath = path + "/chromedriver.exe";
             } else if (System.getProperty("os.name").toLowerCase().contains("nix") || System.getProperty("os.name").toLowerCase().contains("nux")) {
-                resourcePath = "drivers/chromedriver"; // On Linux or macOS, use the plain executable
+                resourcePath = path + "/chromedriver"; // On Linux or macOS, use the plain executable
             } else {
                 throw new UnsupportedOperationException("Unsupported OS for ChromeDriver initialization");
             }
 
             // Get the resource URL
-            URL url = DriverClient.class.getClassLoader().getResource(resourcePath);
-            if (url == null) {
-                throw new RuntimeException("Resource not found: " + resourcePath);
+            String p = "";
+            if (Configuration.getDriverPath() == null) {
+                URL url = DriverClient.class.getClassLoader().getResource(resourcePath);
+                if (url == null) {
+                    throw new RuntimeException("Resource not found: " + resourcePath);
+                }
+                p = url.getPath();
+            } else {
+                if (!Files.exists(Paths.get(resourcePath))) {
+                    throw new RuntimeException("FilePath " + path + " doesn't contain chromedriver");
+                }
+                p = resourcePath;
             }
 
+
             // Get the path from the URL
-            String chromedriverPath = url.getPath();
+            String chromedriverPath = p;
 
             // Adjust path for Windows if necessary
             if (chromedriverPath.startsWith("/") && System.getProperty("os.name").toLowerCase().contains("win")) {
                 chromedriverPath = chromedriverPath.substring(1); // Remove leading slash for Windows
             }
 
-            String urlString = Configuration.getGridUrl();
+            String urlString = Configuration.getDriverUrl();
             String port = urlString.substring(urlString.lastIndexOf(':') + 1);
             ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath, "--port=" + port);
 

@@ -1,9 +1,5 @@
 package elements;
 
-
-
-import lombok.extern.slf4j.Slf4j;
-
 import javax.annotation.WillClose;
 import javax.annotation.concurrent.ThreadSafe;
 import java.time.Duration;
@@ -70,7 +66,7 @@ public abstract class WebDriver {
     }
 
 //    @Override
-    @WillClose()
+    @WillClose
     public void close() {
         DriverClient.Contexts.closeWindow();
     }

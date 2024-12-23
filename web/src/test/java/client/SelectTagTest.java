@@ -21,6 +21,8 @@ public class SelectTagTest extends TestBase {
 
     WebElement select = $(Locator.xpath("//select [@class = 'product_sort_container']"));
 
+    WebElement noSuchElement = $(Locator.xpath("//adadadada"));
+
 
 
     @Test
@@ -49,6 +51,12 @@ public class SelectTagTest extends TestBase {
     @Test
     public void testClassName() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
+
+//        WebElement element = $(Locator.xpath("//adadadada"));
+//        SearchContext exists = element.getSearchContext();
+
+        WebElement element = $(Locator.xpath("header"));
+        System.out.println("exists: " + element.getText());
 
 //        Selenide.$(By.xpath("")).getAttribute()
 

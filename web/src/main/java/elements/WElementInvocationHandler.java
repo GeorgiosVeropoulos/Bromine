@@ -1,6 +1,7 @@
 package elements;
 
 import exceptions.NoSuchElementException;
+import exceptions.WebDriverException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -28,6 +29,24 @@ public class WElementInvocationHandler implements InvocationHandler {
 
         if (method.getName().equals("getBy") && args == null) {
             return locator;
+        }
+
+        if (method.getName().equals("exists") && args == null)  {
+            try {
+                System.out.println("was this called?");
+                realElement = fetchElementFromAPI();
+            } catch (WebDriverException e) {
+                return Boolean.FALSE;
+            }
+        }
+
+        if (method.getName().equals("getSearchContext") && args == null)  {
+            try {
+                System.out.println("invoke getSearchContext this called?");
+                return DriverClient.getElement(locator);
+            } catch (WebDriverException e) {
+                return null;
+            }
         }
 
         // If realElement is null, fetch it when a real method on WebElement is called
@@ -58,39 +77,6 @@ public class WElementInvocationHandler implements InvocationHandler {
         }
     }
 
-    private Field findAnnotatedFieldFromStackTrace(Object proxy) {
-        try {
-            // Get the current thread's stack trace
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-            for (StackTraceElement element : stackTrace) {
-                String className = element.getClassName();
-
-                // Skip irrelevant classes (like JDK/internal libraries)
-                if (className.startsWith("java.") || className.startsWith("sun.")) {
-                    continue;
-                }
-
-                Class<?> callerClass = Class.forName(className);
-                System.out.println(callerClass.toString());
-                // Iterate through fields in the caller class
-//                for (Field field : callerClass.getDeclaredFields()) {
-//                    field.setAccessible(true); // Make private fields accessible
-//
-//                    // Check if the proxy matches the field value
-//                    if (field.getType().isAssignableFrom(proxy.getClass())) {
-//                        Object fieldValue = field.get(null); // Static access
-//                        if (fieldValue == proxy) {
-//                            return field; // Return the matching field
-//                        }
-//                    }
-//                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to find the field for proxy in static context", e);
-        }
-        return null; // No matching field found
-    }
     // Fetches the element from the API using the By locator
     private WebElement fetchElementFromAPI() throws NoSuchElementException {
         return new WebElementImpl(DriverClient.getElement(locator), locator); // Return the real element

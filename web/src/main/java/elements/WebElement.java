@@ -1,19 +1,27 @@
 package elements;
 
 
+import annotations.CanThrow;
+import exceptions.ElementClickInterceptedException;
 import exceptions.NoSuchElementException;
+import exceptions.StaleElementReferenceException;
 import exceptions.WebDriverException;
+import lombok.SneakyThrows;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.CheckReturnValue;
 
-//The WElement is the reference of an active
+@CanThrow({
+        NoSuchElementException.class,
+        StaleElementReferenceException.class,
+        WebDriverException.class})
 public interface WebElement {
 
     /**
      * Clicks the WElement (this will mimick a normal user click as described by)
      * @link <a href="https://www.w3.org/TR/webdriver/#dfn-element-click">w3.org.click</a>
      */
+    @CanThrow(ElementClickInterceptedException.class)
     void click();
 
     /**
@@ -29,8 +37,17 @@ public interface WebElement {
     void sendKeys(String text);
 
     /**
-     * Gets the WebElements visible text
-     * @return
+     * Gets the visible Text of the WebElement and its children.
+     * <p>Example:</p>
+     * <pre>{@code
+     * <header id="header">
+     * 	<h1>Hello</h1>
+     * 	<p id="title">World!</p>
+     * </header>
+     *
+     * }</pre>
+     * For above WebElement with {@code Locator.id("header")} this method will return {@code "Hello\nWorld!"}
+     * @return the text found. or an empty {@code ""} {@link String}
      */
     String getText();
 
@@ -40,7 +57,7 @@ public interface WebElement {
      * <pre>
      *     {@code The tag <div> will return div}
      * </pre>
-     * @return
+     * @return the tag name.
      */
     String getTagName();
 
@@ -62,8 +79,6 @@ public interface WebElement {
     /**
      *
      * @return true if element is visible / false if it isn't
-     * @throws WebDriverException "";
-     * @throws NoSuchElementException "";
      */
     boolean isDisplayed();
 
@@ -112,7 +127,7 @@ public interface WebElement {
 
     /**
      * Will check if the element is currently present/exists in the DOM
-     * @return true if it is. false otherwise.
+     * @return true if it is. false if it doesn't or any {@link WebDriverException} happens
      */
     boolean exists();
 }

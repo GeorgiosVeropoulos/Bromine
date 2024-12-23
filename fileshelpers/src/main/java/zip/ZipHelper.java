@@ -16,12 +16,13 @@ import java.util.zip.ZipInputStream;
 public class ZipHelper {
 
 
-    public static void unzip(Path source, Path target, String fileName) {
+    public static void unzip(Path source, Path target) {
+        String fileName = "";
         try (FileInputStream fis = new FileInputStream(source.toFile());
              ZipInputStream zis = new ZipInputStream(fis)) {
-
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
+                fileName = entry.getName();
                 // Extract entry to target path
                 Path newFile = target.resolve(Paths.get(entry.getName()).getFileName());
 
@@ -31,7 +32,7 @@ public class ZipHelper {
                 } else {
                     // Extract file
                     Files.copy(zis, newFile, StandardCopyOption.REPLACE_EXISTING);
-                    log.info("Extracted: {}", newFile);
+                    log.debug("Extracted: {}", newFile);
                 }
 
                 // Close the current zip entry

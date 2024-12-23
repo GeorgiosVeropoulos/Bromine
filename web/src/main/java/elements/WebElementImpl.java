@@ -112,21 +112,12 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public SearchContext getSearchContext() {
-        if (exists()) {
-            // Simply return the current instance as it already represents the context.
-            return searchContext;
-        }
-        return null;
+        return searchContext;
     }
 
     @Override
     public boolean exists() {
-        try {
-            DriverClient.getElement(locator);
-            return true;
-        } catch (RuntimeException e) {
-            return false;
-        }
+        return searchContext != null;
     }
 
 

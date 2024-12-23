@@ -1,7 +1,6 @@
 package elements;
 
-import annotations.Nullable;
-
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Set;
 
@@ -70,7 +69,8 @@ interface Driver {
 
         void to(String url);
 
-        @Nullable String getCurrentUrl();
+        @Nullable
+        String getCurrentUrl();
         void back();
 
         void forward();

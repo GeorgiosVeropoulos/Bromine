@@ -3,6 +3,8 @@ package drivermanagers;
 import download.Download;
 import elements.ChromeDriver;
 import json.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import zip.ZipHelper;
 
 import java.io.*;
@@ -20,26 +22,19 @@ import java.util.Set;
 // clean up on code is needed.
 
 // Check this https://github.com/GoogleChromeLabs/chrome-for-testing
-public class UpdateChromeDriverHelper extends UpdateDriverHelper{
+public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
     private static final URL chromedriverResource;
-    private static final Platform platform;
+    private static final Logger log = LoggerFactory.getLogger(UpdateChromeDriverHelper.class);
 
     // supported platforms 
-    private enum Platform {
-        WINDOWS,
-        LINUX,
-        MAC
-    }
+
 
     static {
-        String currentOS = System.getProperty("os.name").toLowerCase();
-        if (currentOS.contains("win")) {
+        if (platform == Platform.WINDOWS) {
             chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver.exe");
-            platform = Platform.WINDOWS;
-        } else if (currentOS.contains("nix") || currentOS.contains("nux")) {
+        } else if (platform == Platform.LINUX) {
             chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver");
-            platform = Platform.LINUX;
         } else {
             throw new UnsupportedOperationException("Unsupported OS for ChromeDriver");
         }
@@ -52,7 +47,6 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
         String version = fetchLastKnownGoodVersion(LAST_KNOWN_GOOD_VERSIONS_URL, "Stable");
         String chromeDriver = getChromedriverVersion();
         String installedChromeVersion = getInstalledChromeVersion();
-        boolean b = !installedChromeVersion.substring(0,3).equals(chromeDriver);
         if (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion)) {
             updateChromedriver(version);
         }
@@ -123,35 +117,23 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
         Process process = null;
         String version = null;
 
-        try {
-            if (platform == Platform.WINDOWS) {
-                process = Runtime.getRuntime().exec("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
-            } else if (platform == Platform.LINUX) {
-                process = Runtime.getRuntime().exec("/opt/google/chrome/google-chrome --version");
-            } else if (platform == Platform.MAC) {
-                process = Runtime.getRuntime().exec("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version");
-            } else {
-                throw new UnsupportedOperationException("Unsupported OS");
-            }
+        process = getChromeProcess();
 
-            Scanner scanner = new Scanner(process.getInputStream());
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                if (platform == Platform.WINDOWS && line.contains("version")) {
-                    // Windows: Get the major version
-                    version = line.split("\\s+")[line.split("\\s+").length - 1].split("\\.")[0];
-                } else if (line.toLowerCase().contains("chrome")) {
-                    // Linux/macOS: Extract the first three numbers
-                    version = line.replaceAll("[^\\d.]", "").trim(); // Remove non-numeric characters
-                    String[] parts = version.split("\\.");
-                    if (parts.length >= 3) {
-                        version = parts[0] + "." + parts[1] + "." + parts[2];
-                    }
-                    break;
+        Scanner scanner = new Scanner(process.getInputStream());
+        while (scanner.hasNext()) {
+            String line = scanner.nextLine();
+            if (platform == Platform.WINDOWS && line.contains("version")) {
+                // Windows: Get the major version
+                version = line.split("\\s+")[line.split("\\s+").length - 1].split("\\.")[0];
+            } else if (line.toLowerCase().contains("chrome")) {
+                // Linux/macOS: Extract the first three numbers
+                version = line.replaceAll("[^\\d.]", "").trim(); // Remove non-numeric characters
+                String[] parts = version.split("\\.");
+                if (parts.length >= 3) {
+                    version = parts[0] + "." + parts[1] + "." + parts[2];
                 }
+                break;
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getCause());
         }
 
         if (version == null) {
@@ -165,6 +147,7 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
     private static void updateChromedriver(String chromeVersion) {
         String driverFileName = "";
         String platformString = "";
+        String zipFileToFind = "";
 
         // Determine the platform and file name based on OS
         if (platform == Platform.WINDOWS) {
@@ -184,11 +167,11 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
         String downloadUrl = CHROMEDRIVER_URL + chromeVersion + "/" + platformString + "/chromedriver-" + platformString + ".zip";
         Path zipFilePath = DRIVERS_PACKAGE.resolve("chromedriver.zip");
 
-        // Step 1: download.Download the zip file
+        // Step 1: Download the zip file
         Download.file(downloadUrl, zipFilePath);
 
         // Step 2: Unzip and replace the ChromeDriver binary
-        ZipHelper.unzip(zipFilePath, DRIVERS_PACKAGE, driverFileName);
+        ZipHelper.unzip(zipFilePath, DRIVERS_PACKAGE);
 
         // Step 3: Set the executable permission for the binary
         setExecutablePermission(DRIVERS_PACKAGE.resolve(driverFileName));
@@ -218,10 +201,28 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper{
             }
         } catch (UnsupportedOperationException e) {
             // If the OS doesn't support PosixFilePermissions (Windows or some other OS)
-            System.out.println("Unsupported operation for setting permissions.");
+            log.info("Unsupported operation for setting file permissions.");
         } catch (IOException e) {
             throw new RuntimeException("Failed to set executable permission for " + filePath, e);
         }
+    }
+
+    protected static Process getChromeProcess() {
+        Process process = null;
+        try {
+            process = switch (UpdateDriverHelper.platform) {
+                case WINDOWS ->
+                        Runtime.getRuntime().exec("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+                case LINUX -> Runtime.getRuntime().exec("/opt/google/chrome/google-chrome --version");
+                case MAC ->
+                        Runtime.getRuntime().exec("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version");
+            };
+
+        } catch (IOException platformException) {
+            throw new RuntimeException(platformException.getCause());
+        }
+
+        return process;
     }
 
 

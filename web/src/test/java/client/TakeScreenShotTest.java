@@ -9,7 +9,7 @@ import static elements.WebElementsFactory.$;
 public class TakeScreenShotTest extends TestBase {
 
     WebElement info = $(Locator.xpath("//*[@id='info']"));
-//    WElement s = new WElementImpl("", By.xpath("//*[@id='info']"));
+
     @Test
     public void takeSreenShotTest() {
 

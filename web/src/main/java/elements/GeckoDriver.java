@@ -44,7 +44,7 @@ public class GeckoDriver extends WebDriver {
             if (chromedriverPath.startsWith("/")) {
                 chromedriverPath = chromedriverPath.substring(1); // Remove leading slash for Windows
             }
-            String url = Configuration.getGridUrl();
+            String url = Configuration.getDriverUrl();
             String port = url.substring(url.lastIndexOf(':') + 1);
             ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath, "--port=" + port);
 
