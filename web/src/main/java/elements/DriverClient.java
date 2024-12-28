@@ -6,6 +6,7 @@ import exceptions.NoSuchFrameException;
 import exceptions.NoSuchWindowException;
 import json.JsonBuilder;
 import json.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import sleeper.Sleeper;
 
 import java.time.Duration;
@@ -20,10 +21,11 @@ import static elements.HttpMethodExecutor.*;
 /**
  * Client class that all HTTP request happen.
  */
+@Slf4j
 abstract class DriverClient {
      // URL where the WebDriver is running
     protected static final ThreadLocal<String> SESSION_IDS = new ThreadLocal<>();
-    private static final Logger logger = Logger.getLogger(DriverClient.class.getName());
+//    private static final Logger logger = Logger.getLogger(DriverClient.class.getName());
 
 
     protected static String sessionId() {
@@ -41,16 +43,20 @@ abstract class DriverClient {
             SESSION_IDS.set(sessionID);
             return;
         }
-//        for (int i=0; i < 5; i++) {
-//            Sleeper.sleep(TWO_SECONDS);
-//            response = START(Configuration.getJsonConfig());
-//            sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
-//            if (sessionID != null) {
-//                break;
-//            }
-//        }
+        for (int i=0; i < 5; i++) {
+            log.info("HAD TO RETRY");
+            Sleeper.sleep(TWO_SECONDS);
+            response = START(Configuration.getJsonConfig());
+            sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
+            if (sessionID != null) {
+                break;
+            }
+        }
 
-        throw new RuntimeException("sessionID wasn't able to be set, Could this be a hub issue?");
+        if (sessionID == null) {
+            throw new RuntimeException("sessionID wasn't able to be set, Could this be a hub issue?");
+        }
+        SESSION_IDS.set(sessionID);
     }
 
     protected static void openURL(String url) {
@@ -76,7 +82,7 @@ abstract class DriverClient {
     // Close the browser session
     protected static void closeSession() {
         if (sessionId() == null) {
-            logger.warning("Tried to close session but session was already closed!");
+            log.warn("Tried to close session but session was already closed!");
             return;
         }
         doDeleteRequest("");

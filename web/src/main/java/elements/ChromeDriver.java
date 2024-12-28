@@ -4,7 +4,9 @@ import annotations.AffectedBy;
 import capabilities.BrowserType;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
+import exceptions.WebDriverException;
 import lombok.extern.slf4j.Slf4j;
+import sleeper.Sleeper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
@@ -113,7 +115,7 @@ public class ChromeDriver extends WebDriver {
         }
 
         if (process.isAlive()) {
-            log.debug("Chrome process was alive");
+            log.info("Chrome process was alive");
         }
 
 

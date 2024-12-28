@@ -24,10 +24,10 @@ public class HttpMethodExecutor {
         try {
             return doRequest(HttpMethod.POST, "/session", bodyToSend);
         } catch (IOException e) {
-            throw new WebDriverException("EXCEPTION IN CREATING SESSION");
-            //do nothing for now.
+//            throw new WebDriverException("EXCEPTION IN CREATING SESSION");
+//            do nothing for now.
         }
-//        return new Response("{}");
+        return new Response("{}");
     }
 
     protected static Response doPostRequest(String endPoint, String bodyToSend) {
@@ -123,6 +123,22 @@ public class HttpMethodExecutor {
 //                return JsonParser.parse(errorResponse.toString());
             }
         }
+    }
+
+    private static HttpURLConnection getHttpURLConnection(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException {
+        URL url = new URL(Configuration.getDriverUrl()  + endPoint);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(requestMethod.getMethod());
+        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        connection.setDoOutput(true);
+
+        if (bodyToSend != null) {
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = bodyToSend.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+        }
+        return connection;
     }
 
 }

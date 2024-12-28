@@ -44,12 +44,19 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
     private static final String LAST_KNOWN_GOOD_VERSIONS_URL = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json";
 
     public static void checkChromeVersionIsUpdated() {
+        log.info("inside checkChromeVersionIsUpdated");
         String version = fetchLastKnownGoodVersion(LAST_KNOWN_GOOD_VERSIONS_URL, "Stable");
+        log.info("version fetched {}", version);
         String chromeDriver = getChromedriverVersion();
+        log.info("chromeDriver fetched {}", chromeDriver);
         String installedChromeVersion = getInstalledChromeVersion();
+
+        log.info("installedChromeVersion fetched {}", installedChromeVersion);
         if (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion)) {
             updateChromedriver(version);
+            log.info("update chrome Driver");
         }
+        log.info("Exit checkChromeVersionIsUpdated");
     }
 
 
