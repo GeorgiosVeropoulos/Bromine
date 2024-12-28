@@ -30,8 +30,16 @@ jobs:
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
+      # Set the DRIVER_URL environment variable dynamically
       - name: Set Driver URL for GitHub Actions
-        run: echo "DRIVER_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+        run: |
+          DRIVER_IP=$(curl -s ifconfig.me)
+          DRIVER_URL="http://$DRIVER_IP:51325"
+          echo "DRIVER_URL=$DRIVER_URL" >> $GITHUB_ENV
+          echo "ChromeDriver running at: $DRIVER_URL"
+
+#      - name: Set Driver URL for GitHub Actions
+#        run: echo "DRIVER_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
       - name: Verify DRIVER_URL
         run: echo "Driver URL is $DRIVER_URL"
