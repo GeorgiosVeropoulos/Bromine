@@ -54,6 +54,7 @@ protected static String DRIVER_URL;
     @BeforeEach
     public void beforeEach() {
 //        WebDriverContainer.set();
+        System.out.println("DRIVER URL WAS " + DRIVER_URL);
         new ChromeDriver();
 
 //        new GeckoDriver();
