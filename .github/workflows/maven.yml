@@ -31,7 +31,7 @@ jobs:
     - run: chrome --version
 
     - name: Build with Maven
-      run: mvn -B clean install -DskipTests=true
+      run: mvn -B clean install -DskipTests=true -f web/pom.xml
 
     - uses: actions/checkout@main
     - uses: codecov/codecov-action@v5
