@@ -14,6 +14,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 @ThreadSafe
 @AffectedBy(clazz = UpdateChromeDriverHelper.class)
@@ -23,17 +24,36 @@ public class ChromeDriver extends WebDriver {
 //    private static final Logger log = LoggerFactory.getLogger(ChromeDriver.class);
     protected static final ConcurrentHashMap<Long, String> map = new ConcurrentHashMap<>();
 
+    private static boolean initialized = false;
+    private static final ReentrantLock lock = new ReentrantLock();
 
     // Static block to ensure process starts only if Chrome is the selected browser
     // Also checks if the current chromedriver is using the most updated version.
-    static {
-        if (isChromeSelected()) {
-            log.info("Before check Chrome Version");
-            UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
-            log.info("Before start chrome process");
-            runAndShutDownDriver(ChromeDriver::startChromeProcess);
-        }
+//    static {
+//        if (isChromeSelected()) {
+//            log.info("Before check Chrome Version");
+//            UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
+//            log.info("Before start chrome process");
+//            runAndShutDownDriver(ChromeDriver::startChromeProcess);
+//        }
+//
+//    }
 
+    private static void initialize() {
+        if (isChromeSelected() && !initialized) {
+            lock.lock();
+            try {
+                if (!initialized) {  // Double-checked locking
+                    log.info("Before check Chrome Version");
+                    UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
+                    log.info("Before start chrome process");
+                    runAndShutDownDriver(ChromeDriver::startChromeProcess);
+                    initialized = true;
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
     // Method to check if Chrome is the selected browser
@@ -53,6 +73,7 @@ public class ChromeDriver extends WebDriver {
             + Configuration.getBrowserType().name());
         }
 
+        initialize();
 //        UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
 //        runAndShutDownDriver(ChromeDriver::startChromeProcess);
         // Start a new session for each ChromeDriver instance
