@@ -33,7 +33,7 @@ jobs:
           sudo apt install -y google-chrome-stable
         shell: bash
       - name: Verify Chrome Version
-        run: google-chrome-stable --version
+        run: google-chrome --version
 
       # Set the DRIVER_URL environment variable dynamically
       - name: Set Driver URL for GitHub Actions
