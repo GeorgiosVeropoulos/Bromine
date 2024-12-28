@@ -33,7 +33,7 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean install -DskipTests=true -f parent/pom.xml
       - name: Run Tests
-        run: mvn -B test -Dgroups=TagName -f ../web/pom.xml
+        run: mvn -B test -Dgroups=TagName -f web/pom.xml
       - name: CodeCov coverage
 #      - uses: actions/checkout@main
         uses: codecov/codecov-action@v5
