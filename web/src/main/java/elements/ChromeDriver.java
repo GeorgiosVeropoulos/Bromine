@@ -26,7 +26,9 @@ public class ChromeDriver extends WebDriver {
     // Also checks if the current chromedriver is using the most updated version.
     static {
         if (isChromeSelected()) {
+            log.info("Before check Chrome Version");
             UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
+            log.info("Before start chrome process");
             runAndShutDownDriver(ChromeDriver::startChromeProcess);
         }
 

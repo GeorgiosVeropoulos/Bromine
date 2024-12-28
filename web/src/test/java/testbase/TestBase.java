@@ -51,7 +51,7 @@ protected static String DRIVER_URL;
         log.info("Configuration Done");
 //        Configuration.setDriverPath(Path.of(System.getProperty("user.dir"),"/src/main/resources"));
 //        ScreenShot.config.setImageFormat("png");%
-//        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots"));
+        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots"));
 
     }
 
