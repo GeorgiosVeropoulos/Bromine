@@ -58,6 +58,8 @@ protected static String DRIVER_URL;
     @BeforeEach
     public void beforeEach() {
 //        WebDriverContainer.set();
+        DRIVER_URL = "http://127.0.0.1:9515";
+        Configuration.setDriverUrl(DRIVER_URL);
         log.info("DRIVER URL WAS {}", DRIVER_URL);
         new ChromeDriver();
 

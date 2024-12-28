@@ -126,7 +126,7 @@ public class ChromeDriver extends WebDriver {
 
             String urlString = Configuration.getDriverUrl();
             String port = urlString.substring(urlString.lastIndexOf(':') + 1);
-            ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath, "--port=" + port);
+            ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath, "--port=" + port, "--host:0.0.0.0", "--verbose");
 
             try {
                 process = processBuilder.start();
