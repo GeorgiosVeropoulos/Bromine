@@ -16,6 +16,7 @@
 
 
     <properties>
+        <tags>parallel</tags>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,6 +34,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.11.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>1.3.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -54,7 +61,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <groups>parallel</groups>
+                    <groups>${tags}</groups>
                     <!-- Enable parallel execution -->
                     <parallel>methods</parallel>
                     <threadCount>4</threadCount>

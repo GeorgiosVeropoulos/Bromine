@@ -2,6 +2,8 @@ package client;
 
 import elements.*;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import testbase.TestBase;
 
@@ -48,15 +50,15 @@ public class SelectTagTest extends TestBase {
     }
 
 
-    @Test
+    @Test @Tag("TagName")
     public void testClassName() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
 
-        WebElements elements = null;
 //        WebElement element = $(Locator.xpath("//adadadada"));
 //        SearchContext exists = element.getSearchContext();
 
         WebElement element = $(Locator.id("header"));
+        Assertions.assertNotNull(element.getTagName());
         System.out.println("exists: " + element.getText());
 
 //        Selenide.$(By.xpath("")).getAttribute()
