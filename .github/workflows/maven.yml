@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - uses: browser-actions/setup-chrome@latest
+      - uses: browser-actions/setup-chrome@stable
       - run: chrome --version
 
       # Set the DRIVER_URL environment variable dynamically

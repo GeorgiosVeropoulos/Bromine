@@ -45,7 +45,7 @@ abstract class DriverClient {
         }
         for (int i=0; i < 5; i++) {
             log.info("HAD TO RETRY");
-            Sleeper.sleep(TWO_SECONDS);
+            Sleeper.sleepInSeconds(2);
             response = START(Configuration.getJsonConfig());
             sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
             if (sessionID != null) {
