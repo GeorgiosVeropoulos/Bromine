@@ -30,6 +30,13 @@ jobs:
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
+      - name: Set Driver URL for GitHub Actions
+        run: echo "DRIVER_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+
+      - name: Verify DRIVER_URL
+        run: echo "Driver URL is $DRIVER_URL"
+
+
       - name: Build with Maven
         run: mvn -B clean install -DskipTests=true -f parent/pom.xml
       - name: Run Tests

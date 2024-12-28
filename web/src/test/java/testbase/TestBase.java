@@ -23,7 +23,20 @@ import java.util.Map;
 
 @Execution(ExecutionMode.CONCURRENT)
 public class TestBase {
-protected static final String DRIVER_URL = "http://localhost:51325";
+protected static String DRIVER_URL;
+
+    static {
+        String envUrl = System.getenv("DRIVER_URL");
+
+        // Check if envUrl is set, otherwise default to localhost with port
+        if (envUrl != null) {
+            // Append :51325 if not already included
+            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":51325";
+        } else {
+            // Default to localhost with port
+            DRIVER_URL = "http://localhost:51325";
+        }
+    }
 
     public TestBase() {
         String json = chromeCapabilities();
