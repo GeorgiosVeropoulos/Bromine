@@ -16,6 +16,7 @@ public class TakeScreenShotTest extends TestBase {
         System.out.println("HASH  " + 0x61c88647);
         WebDriver.get().open("https://www.georgeveropoulos.com/");
         System.out.println(ScreenShot.takeScreenShot(info));
+        System.out.println(ScreenShot.takeScreenShot());
 //        ScreenShot.takeScreenShot();
     }
 }

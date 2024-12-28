@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 public class ScreenShot {
@@ -59,7 +60,7 @@ public class ScreenShot {
         Response response = HttpMethodExecutor.doGetRequest(endpoint);
         Path saveLocation = null;
         try {
-            saveLocation = writeImage(decodeBase64ToByteArray(response.getString("value")), (System.currentTimeMillis()) + "." + format);
+            saveLocation = writeImage(decodeBase64ToByteArray(response.getString("value")), (UUID.randomUUID()) + "." + format);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

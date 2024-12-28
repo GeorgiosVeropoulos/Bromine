@@ -52,10 +52,11 @@ public class SelectTagTest extends TestBase {
     public void testClassName() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
 
+        WebElements elements = null;
 //        WebElement element = $(Locator.xpath("//adadadada"));
 //        SearchContext exists = element.getSearchContext();
 
-        WebElement element = $(Locator.xpath("header"));
+        WebElement element = $(Locator.id("header"));
         System.out.println("exists: " + element.getText());
 
 //        Selenide.$(By.xpath("")).getAttribute()
