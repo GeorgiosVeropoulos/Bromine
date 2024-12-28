@@ -27,7 +27,7 @@ public class HttpMethodExecutor {
             throw new WebDriverException("EXCEPTION IN CREATING SESSION");
             //do nothing for now.
         }
-        return new Response("{}");
+//        return new Response("{}");
     }
 
     protected static Response doPostRequest(String endPoint, String bodyToSend) {
