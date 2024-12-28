@@ -33,10 +33,10 @@ protected static String DRIVER_URL;
         // Check if envUrl is set, otherwise default to localhost with port
         if (envUrl != null) {
             // Append :51325 if not already included
-            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":51325";
+            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":9515";
         } else {
             // Default to localhost with port
-            DRIVER_URL = "http://localhost:51325";
+            DRIVER_URL = "http://localhost:9515";
         }
     }
 
@@ -101,6 +101,7 @@ protected static String DRIVER_URL;
         prefs.put("download.prompt_for_download", false);  // Auto download without confirmation
         prefs.put("download.directory_upgrade", true);
         prefs.put("safebrowsing.enabled", true);  // Enable Safe Browsing
+        prefs.put("platformName", "LINUX");
         return new ChromeCapabilities().addArguments(
                 "--start-maximized",  // Starts Chrome maximized
                 "--disable-infobars",  // Disables the info bar

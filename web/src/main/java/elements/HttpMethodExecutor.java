@@ -4,6 +4,7 @@ import capabilities.Configuration;
 import enums.HttpMethod;
 import exceptions.WebDriverException;
 import json.JsonBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * !!!UNDER CONSTRUCTION!!!
  */
+@Slf4j
 public class HttpMethodExecutor {
 
 
@@ -81,8 +83,12 @@ public class HttpMethodExecutor {
      */
     private static Response doRequest(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException{
 
-        URL url = new URL(Configuration.getDriverUrl()  + endPoint);
+        String URL = Configuration.getDriverUrl()  + endPoint;
+        log.info("Will do Request on {}", URL);
+        URL url = new URL(URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setConnectTimeout(40_000);
+        connection.setReadTimeout(40_000);
         connection.setRequestMethod(requestMethod.getMethod());
         connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         connection.setDoOutput(true);
@@ -111,7 +117,7 @@ public class HttpMethodExecutor {
             }
         } else {
             // Error response: read from ErrorStream
-            System.err.println("Error during session creation: HTTP Response Code " + responseCode);
+            log.error("Error during session creation: HTTP Response Code " + responseCode);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
                 StringBuilder errorResponse = new StringBuilder();
                 String responseLine;
