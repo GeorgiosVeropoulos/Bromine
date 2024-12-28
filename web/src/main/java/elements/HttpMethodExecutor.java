@@ -2,6 +2,7 @@ package elements;
 
 import capabilities.Configuration;
 import enums.HttpMethod;
+import exceptions.WebDriverException;
 import json.JsonBuilder;
 
 import java.io.BufferedReader;
@@ -23,6 +24,7 @@ public class HttpMethodExecutor {
         try {
             return doRequest(HttpMethod.POST, "/session", bodyToSend);
         } catch (IOException e) {
+            throw new WebDriverException("EXCEPTION IN CREATING SESSION");
             //do nothing for now.
         }
         return new Response("{}");

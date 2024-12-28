@@ -41,20 +41,16 @@ abstract class DriverClient {
             SESSION_IDS.set(sessionID);
             return;
         }
-        for (int i=0; i < 5; i++) {
-            Sleeper.sleep(TWO_SECONDS);
-            response = START(Configuration.getJsonConfig());
-            sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
-            if (sessionID != null) {
-                break;
-            }
-        }
+//        for (int i=0; i < 5; i++) {
+//            Sleeper.sleep(TWO_SECONDS);
+//            response = START(Configuration.getJsonConfig());
+//            sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
+//            if (sessionID != null) {
+//                break;
+//            }
+//        }
 
-        if (sessionID == null) {
-            throw new RuntimeException("sessionID wasn't able to be set, Could this be a hub issue?");
-        }
-        System.out.println("SESSIONID: " + sessionID);
-        SESSION_IDS.set(sessionID);
+        throw new RuntimeException("sessionID wasn't able to be set, Could this be a hub issue?");
     }
 
     protected static void openURL(String url) {

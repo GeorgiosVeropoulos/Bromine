@@ -5,6 +5,7 @@ import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import capabilities.FireFoxCapabilities;
 import elements.*;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -21,6 +22,7 @@ import java.util.Map;
  * It starts and closes a Session.
  */
 
+@Slf4j
 @Execution(ExecutionMode.CONCURRENT)
 public class TestBase {
 protected static String DRIVER_URL;
@@ -40,11 +42,13 @@ protected static String DRIVER_URL;
 
     public TestBase() {
         String json = chromeCapabilities();
+        log.info("Capabilities set");
 //        String json = firefoxCapabilities();
         Configuration.setDriverUrl(DRIVER_URL);
         Configuration.setBrowserType(BrowserType.CHROME);
         Configuration.setJsonConfig(json);
-
+        log.info("URL TO BE USED IS " + DRIVER_URL);
+        log.info("Configuration Done");
 //        Configuration.setDriverPath(Path.of(System.getProperty("user.dir"),"/src/main/resources"));
 //        ScreenShot.config.setImageFormat("png");%
         ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots"));
