@@ -43,7 +43,7 @@ abstract class DriverClient {
             SESSION_IDS.set(sessionID);
             return;
         }
-        for (int i=0; i < 5; i++) {
+        for (int i=0; i < 1; i++) {
             log.info("HAD TO RETRY");
             Sleeper.sleepInSeconds(2);
             response = START(Configuration.getJsonConfig());
