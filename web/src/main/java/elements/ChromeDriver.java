@@ -52,9 +52,11 @@ public class ChromeDriver extends WebDriver {
 //        UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
 //        runAndShutDownDriver(ChromeDriver::startChromeProcess);
         // Start a new session for each ChromeDriver instance
+        log.info("Before starting session");
         DriverClient.startSession();
         map.put(Thread.currentThread().getId(), DriverClient.sessionId());
         set(this);
+        log.info("after starting session");
     }
 
 
