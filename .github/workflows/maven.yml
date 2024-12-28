@@ -27,8 +27,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - uses: browser-actions/setup-chrome@stable
-      - run: chrome --version
+      - name: Install Stable Google Chrome
+        run: |
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+        shell: bash
+      - name: Verify Chrome Version
+        run: google-chrome-stable --version
 
       # Set the DRIVER_URL environment variable dynamically
       - name: Set Driver URL for GitHub Actions
