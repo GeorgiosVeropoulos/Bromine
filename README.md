@@ -1,4 +1,5 @@
 <p>Bromine</p>
+[![Coverage Status][codecov-badge]][codecov]
 
 ### What is it?
 ##### An implementation of the WebDriverAPI.
@@ -16,3 +17,6 @@ Bromine (Br) sits directly next to Selenium (Se) in the periodic table.
 ### Still under development...
 
 
+
+[codecov]: https://app.codecov.io/gh/GeorgiosVeropoulos/bromine
+[codecov-badge]: https://codecov.io/gh/GeorgiosVeropoulos/bromine/branch/dev/graph/badge.svg
