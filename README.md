@@ -1,5 +1,6 @@
 <p>Bromine</p>
-[![Coverage Status][codecov-badge]][codecov]
+
+[![Coverage Status][codecov-badge]][codecov] 
 
 ### What is it?
 ##### An implementation of the WebDriverAPI.
