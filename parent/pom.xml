@@ -11,7 +11,7 @@
 
     <modules>
         <module>../web</module>
-        <module>../fileshelpers</module>
+        <module>../utils</module>
     </modules>
 
     <properties>
