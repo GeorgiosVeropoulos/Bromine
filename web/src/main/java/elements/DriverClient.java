@@ -197,7 +197,9 @@ abstract class DriverClient {
                 return (String) valueContent;
             }
             if (valueContent instanceof Map<?,?>) {
-                return ((Map<?, ?>) valueContent).values().iterator().next().toString();
+                if (((Map<?, ?>) valueContent).get("error") != null) {
+                    return null;
+                }
             }
             return null;
         }

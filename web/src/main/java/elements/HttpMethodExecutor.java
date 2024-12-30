@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -87,8 +88,8 @@ public class HttpMethodExecutor {
         log.info("Will do Request on {}", URL);
         URL url = new URL(URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setConnectTimeout(40_000);
-        connection.setReadTimeout(40_000);
+        connection.setConnectTimeout(Configuration.network().getConnectionTimeout());
+        connection.setReadTimeout(Configuration.network().getReadTimeout());
         connection.setRequestMethod(requestMethod.getMethod());
         connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         connection.setDoOutput(true);

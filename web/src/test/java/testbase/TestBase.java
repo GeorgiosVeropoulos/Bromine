@@ -1,9 +1,6 @@
 package testbase;
 
-import capabilities.BrowserType;
-import capabilities.ChromeCapabilities;
-import capabilities.Configuration;
-import capabilities.FireFoxCapabilities;
+import capabilities.*;
 import elements.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -46,6 +43,9 @@ protected static String DRIVER_URL;
 //        String json = firefoxCapabilities();
         Configuration.setDriverUrl(DRIVER_URL);
         Configuration.setBrowserType(BrowserType.CHROME);
+        Configuration.network()
+                .setReadTimeout(Duration.ofSeconds(45))
+                .setConnectionTimeout(Duration.ofSeconds(45));
 //        Configuration.setJsonConfig(json);
         log.info("URL TO BE USED IS " + DRIVER_URL);
         log.info("Configuration Done");

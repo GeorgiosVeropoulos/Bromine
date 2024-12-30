@@ -9,4 +9,6 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
+<!--    <immediateFlush>true</immediateFlush>-->
+
 </configuration>

@@ -1,6 +1,7 @@
 package capabilities;
 
 
+import elements.HttpMethodExecutor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,11 @@ public class Configuration {
 
     @Getter @Setter
     private static Path driverPath;
+
+
+    public static NetworkSettings network() {
+        return new NetworkSettings();
+    }
 
 
 
