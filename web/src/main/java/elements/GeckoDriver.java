@@ -31,7 +31,7 @@ public class GeckoDriver extends WebDriver {
         }
         if (isGeckoSelected()) {
             // Start a new session for each GeckoDriver instance
-            DriverClient.startSession();
+//            DriverClient.startSession();
             map.put(Thread.currentThread().getId(), DriverClient.sessionId());
         }
         set(this);

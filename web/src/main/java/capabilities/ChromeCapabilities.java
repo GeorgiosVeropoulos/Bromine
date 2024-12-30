@@ -65,7 +65,14 @@ public class ChromeCapabilities extends Capabilities {
         return this;
     }
 
-    public String build() {
+    public ChromeCapabilities build() {
+        return this;
+    }
+
+    @Override
+    public String toString() {
         return jsonBuilder.build();
     }
+
+
 }

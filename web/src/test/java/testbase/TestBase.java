@@ -41,12 +41,12 @@ protected static String DRIVER_URL;
     }
 
     public TestBase() {
-        String json = chromeCapabilities();
+        ChromeCapabilities json = chromeCapabilities();
         log.info("Capabilities set");
 //        String json = firefoxCapabilities();
         Configuration.setDriverUrl(DRIVER_URL);
         Configuration.setBrowserType(BrowserType.CHROME);
-        Configuration.setJsonConfig(json);
+//        Configuration.setJsonConfig(json);
         log.info("URL TO BE USED IS " + DRIVER_URL);
         log.info("Configuration Done");
 //        Configuration.setDriverPath(Path.of(System.getProperty("user.dir"),"/src/main/resources"));
@@ -57,11 +57,10 @@ protected static String DRIVER_URL;
 
     @BeforeEach
     public void beforeEach() {
-//        WebDriverContainer.set();
-        DRIVER_URL = "http://127.0.0.1:9515";
         Configuration.setDriverUrl(DRIVER_URL);
         log.info("DRIVER URL WAS {}", DRIVER_URL);
-        new ChromeDriver();
+//        new ChromeDriver();
+        new ChromeDriver(chromeCapabilities());
 
 //        new GeckoDriver();
         //        Sleeper.sleep(TWO_SECONDS);
@@ -72,10 +71,6 @@ protected static String DRIVER_URL;
         WebDriver.get().timeouts().set().scriptWait(Duration.ofSeconds(20));
 
 
-//        WebDriverContainer.get().window().maximize();
-
-//        DriverClient.startSession();
-//        DriverClient.setImplicitWait(FIVE_SECONDS);
     }
 
 
@@ -94,7 +89,7 @@ protected static String DRIVER_URL;
 
 
 
-    public String chromeCapabilities() {
+    public ChromeCapabilities chromeCapabilities() {
         Map<String,Object> prefs = new HashMap<>();
         prefs.put("profile.default_content_setting_values.notifications", 2);  // Disable notifications popup
         prefs.put("credentials_enable_service", false);  // Disable password manager popup
@@ -115,8 +110,7 @@ protected static String DRIVER_URL;
                 "--disable-dev-shm-usage"  // Addresses issues with /dev/shm size on certain systems
         )
                 .addPrefs(prefs)
-                .addExtra("excludeSwitches", new String[]{"enable-automation"})
-                .build();
+                .addExtra("excludeSwitches", new String[]{"enable-automation"}).build();
     }
 
     public String firefoxCapabilities() {

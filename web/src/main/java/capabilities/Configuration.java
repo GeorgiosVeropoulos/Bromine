@@ -14,7 +14,7 @@ import java.nio.file.Path;
  */
 public class Configuration {
 
-    @Getter @Setter
+    @Getter @Setter @Deprecated(forRemoval = true, since = "Capabilities will be added for each BrowserType that can be passed on the constructor")
     private static String jsonConfig;
     @Getter @Setter
     private static String driverUrl;

@@ -2,11 +2,10 @@ package elements;
 
 import annotations.AffectedBy;
 import capabilities.BrowserType;
+import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
-import exceptions.WebDriverException;
 import lombok.extern.slf4j.Slf4j;
-import sleeper.Sleeper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
@@ -27,17 +26,6 @@ public class ChromeDriver extends WebDriver {
     private static boolean initialized = false;
     private static final ReentrantLock lock = new ReentrantLock();
 
-    // Static block to ensure process starts only if Chrome is the selected browser
-    // Also checks if the current chromedriver is using the most updated version.
-//    static {
-//        if (isChromeSelected()) {
-//            log.info("Before check Chrome Version");
-//            UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
-//            log.info("Before start chrome process");
-//            runAndShutDownDriver(ChromeDriver::startChromeProcess);
-//        }
-//
-//    }
 
     private static void initialize() {
         if (isChromeSelected() && !initialized) {
@@ -62,23 +50,32 @@ public class ChromeDriver extends WebDriver {
         return BrowserType.CHROME.name().equalsIgnoreCase(browser);
     }
 
-    // Constructor: start session only if Chrome is selected
+    /**
+     * Will open a Chrome window with no capabilities set.
+     */
     public ChromeDriver() {
-        if (!Configuration.getJsonConfig().contains("chrome")) {
+        ChromeCapabilities defaultCapabilities = new ChromeCapabilities();
+        new ChromeDriver(defaultCapabilities);
+    }
+
+    /**
+     * Will open a Chrome window with the capabilities set.
+     * @param chromeCapabilities to be used.
+     */
+    public ChromeDriver(ChromeCapabilities chromeCapabilities) {
+        String chromeCapabilitiesAsString = chromeCapabilities.toString();
+        if (!chromeCapabilitiesAsString.contains("chrome")) {
             throw new UnsupportedOperationException("ChromeDriver couldn't be created. Make sure your " +
                     "jsonConfig contains correct structure for Chrome.");
         }
         if (!isChromeSelected()) {
             throw new IllegalArgumentException("Tried to create a Chrome Browser when the BrowserType selected was: "
-            + Configuration.getBrowserType().name());
+                    + Configuration.getBrowserType().name());
         }
 
         initialize();
-//        UpdateChromeDriverHelper.checkChromeVersionIsUpdated();
-//        runAndShutDownDriver(ChromeDriver::startChromeProcess);
-        // Start a new session for each ChromeDriver instance
         log.info("Before starting session");
-        DriverClient.startSession();
+        DriverClient.startSession(chromeCapabilitiesAsString);
         map.put(Thread.currentThread().getId(), DriverClient.sessionId());
         set(this);
         log.info("after starting session");

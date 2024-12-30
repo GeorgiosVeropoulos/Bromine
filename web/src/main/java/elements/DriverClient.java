@@ -36,8 +36,8 @@ abstract class DriverClient {
 
 
     // Start a browser session
-    protected static void startSession() {
-        Response response = START(Configuration.getJsonConfig());
+    protected static void startSession(String capabilitiesAsString) {
+        Response response = START(capabilitiesAsString);
         String sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
         if (sessionID != null) {
             SESSION_IDS.set(sessionID);
@@ -46,7 +46,7 @@ abstract class DriverClient {
         for (int i=0; i < 1; i++) {
             log.info("HAD TO RETRY");
             Sleeper.sleepInSeconds(2);
-            response = START(Configuration.getJsonConfig());
+            response = START(capabilitiesAsString);
             sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
             if (sessionID != null) {
                 break;

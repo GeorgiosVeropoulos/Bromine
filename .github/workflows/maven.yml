@@ -38,7 +38,7 @@ jobs:
       # Set the DRIVER_URL environment variable dynamically
       - name: Set Driver URL for GitHub Actions
         run: |
-          DRIVER_IP=$(curl -s ifconfig.me)
+          DRIVER_IP=127.0.0.1
           DRIVER_URL="http://$DRIVER_IP:9515"
           echo "DRIVER_URL=$DRIVER_URL" >> $GITHUB_ENV
           echo "ChromeDriver running at: $DRIVER_URL"
