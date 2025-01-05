@@ -1,15 +1,15 @@
 package client;
 
-import elements.ChromeDriver;
 import elements.WebDriver;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import testbase.TestBase;
 
 public class WindowsTest extends TestBase {
 
 
-    @Test
+    @Test @Tag("coverage")
     public void closingLastWindowReturnsNullTest() {
         String handle = WebDriver.get().window().getWindowHandle();
         Assertions.assertNotNull(handle);
@@ -18,7 +18,7 @@ public class WindowsTest extends TestBase {
         Assertions.assertNull(handle);
     }
 
-    @Test
+    @Test @Tag("coverage")
     public void switchToNewTabHandleTest() {
         WebDriver.get().open("https://www.google.com");
         String handle = WebDriver.get().window().getWindowHandle();

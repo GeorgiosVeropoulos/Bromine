@@ -23,7 +23,7 @@ public class IframesTest extends TestBase {
 
 
 
-    @Test
+    @Test @Tag("coverage")
     public void switchIframeTest() {
         WebDriver.get().open("https://seleniumbase.io/w3schools/iframes");
         Wait wait = new Wait();

@@ -4,6 +4,7 @@ import elements.Locator;
 import elements.WebElement;
 import elements.WebElements;
 import elements.WebDriver;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import testbase.TestBase;
 
@@ -16,6 +17,7 @@ public class FindElementsInsideElementTest extends TestBase {
 
 
     @Test
+    @Tag("coverage")
     public void test() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
 

@@ -2,7 +2,6 @@ package elements;
 
 import capabilities.Configuration;
 import enums.HttpMethod;
-import exceptions.WebDriverException;
 import json.JsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -53,7 +51,7 @@ public class HttpMethodExecutor {
     }
 
 
-    protected static String doDeleteRequest(String endPoint) {
+    protected static void doDeleteRequest(String endPoint) {
         try {
             URL url = new URL(Configuration.getDriverUrl() + "/session/" + DriverClient.sessionId() + endPoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -62,12 +60,11 @@ public class HttpMethodExecutor {
             int responseCode = connection.getResponseCode();
             if (responseCode == 200) {
                 System.out.println("Delete call successfully.");
-                return connection.getResponseMessage();
+                connection.getResponseMessage();
 
             } else {
                 System.err.println("Failed to Delete call. Response code: " + responseCode);
             }
-            return null;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -118,7 +115,7 @@ public class HttpMethodExecutor {
             }
         } else {
             // Error response: read from ErrorStream
-            log.error("Error during session creation: HTTP Response Code " + responseCode);
+            log.error("Error during session creation: HTTP Response Code {}", responseCode);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
                 StringBuilder errorResponse = new StringBuilder();
                 String responseLine;

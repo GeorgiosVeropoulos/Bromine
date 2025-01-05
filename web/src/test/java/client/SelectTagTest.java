@@ -50,7 +50,7 @@ public class SelectTagTest extends TestBase {
     }
 
 
-    @Test @Tag("TagName")
+    @Test @Tag("TagName") @Tag("coverage")
     public void testClassName() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
 

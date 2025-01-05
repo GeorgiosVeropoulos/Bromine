@@ -1,6 +1,7 @@
 package client;
 
 import elements.*;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import testbase.TestBase;
 
@@ -15,7 +16,7 @@ public class TextsTest extends TestBase {
 
     WebElement username = $(Locator.id("user-name"));
 
-    @Test
+    @Test @Tag("coverage")
     public void getTextTest() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
         System.out.println("Text fetched was: " + header.getText());

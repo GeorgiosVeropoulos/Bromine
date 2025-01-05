@@ -39,7 +39,7 @@ public class MaximizeWindowTest extends TestBase {
         System.out.println(1);
     }
 
-    @Test @Tag("parallel")
+    @Test @Tag("parallel") @Tag("coverage")
     public void maximizeWindowTest() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
         System.out.println(elementList.size());

@@ -20,7 +20,7 @@ public class GetURLTest extends TestBase {
         WebDriver.get().open("https://www.georgeveropoulos.com");
 //        WebDriverContainer.get().close();
 
-//        Assertions.assertTrue(WebDriverContainer.get().navigation().getCurrentUrl().contains("https://www.georgeveropoulos.com"));
+        Assertions.assertTrue(WebDriver.get().navigation().getCurrentUrl().contains("https://www.georgeveropoulos.com"));
 //        WebDriverContainer.get().switchTo().newTab();
 //        WebDriverContainer.get().open("https://www.georgeveropoulos.com");
 //        WebDriverContainer.get().close();
@@ -28,7 +28,7 @@ public class GetURLTest extends TestBase {
 //        WebDriverContainer.get().switchTo().newTab();
 //        WebDriverContainer.get().open("https://www.georgeveropoulos.com");
 //        WebDriverContainer.get().close();
-        System.out.println("");
+//        System.out.println("");
 
     }
 

@@ -18,7 +18,7 @@ public class ElementClickInterceptTest extends TestBase {
 
     WebElement toBeIntercepted = $(Locator.xpath("//div//time"));
 
-    @Test @Tag("parallel")
+    @Test @Tag("parallel") @Tag("coverage")
     public void checkInterceptTest() {
         WebDriver.get().open("https://www.rollingstone.com/tv/tv-reviews/shining-girls-review-elisabeth-moss-1339682/");
         Sleeper.sleep(FIVE_SECONDS);

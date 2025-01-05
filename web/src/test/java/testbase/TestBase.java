@@ -38,8 +38,7 @@ protected static String DRIVER_URL;
     }
 
     public TestBase() {
-        ChromeCapabilities json = chromeCapabilities();
-        log.info("Capabilities set");
+//        ChromeCapabilities json = chromeCapabilities();
 //        String json = firefoxCapabilities();
         Configuration.setDriverUrl(DRIVER_URL);
         Configuration.setBrowserType(BrowserType.CHROME);
@@ -47,8 +46,6 @@ protected static String DRIVER_URL;
                 .setReadTimeout(Duration.ofSeconds(45))
                 .setConnectionTimeout(Duration.ofSeconds(45));
 //        Configuration.setJsonConfig(json);
-        log.info("URL TO BE USED IS " + DRIVER_URL);
-        log.info("Configuration Done");
 //        Configuration.setDriverPath(Path.of(System.getProperty("user.dir"),"/src/main/resources"));
 //        ScreenShot.config.setImageFormat("png");%
 //        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots"));
@@ -57,8 +54,8 @@ protected static String DRIVER_URL;
 
     @BeforeEach
     public void beforeEach() {
-        Configuration.setDriverUrl(DRIVER_URL);
-        log.info("DRIVER URL WAS {}", DRIVER_URL);
+//        Configuration.setDriverUrl(DRIVER_URL);
+//        log.info("DRIVER URL WAS {}", DRIVER_URL);
 //        new ChromeDriver();
         new ChromeDriver(chromeCapabilities());
 
@@ -66,7 +63,7 @@ protected static String DRIVER_URL;
         //        Sleeper.sleep(TWO_SECONDS);
 
         WebDriver.get().window().maximize();
-        WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(5));
+        WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(20));
         WebDriver.get().timeouts().set().pageLoad(Duration.ofSeconds(20));
         WebDriver.get().timeouts().set().scriptWait(Duration.ofSeconds(20));
 
@@ -75,7 +72,7 @@ protected static String DRIVER_URL;
 
 
     @AfterEach
-    public void afterEach() throws IOException {
+    public void afterEach() {
         if (WebDriver.get() != null) {
             WebDriver.get().quit();
         }
@@ -103,8 +100,8 @@ protected static String DRIVER_URL;
                 "--start-maximized",  // Starts Chrome maximized
                 "--disable-infobars",  // Disables the info bar
                 "--disable-notifications",  // Disables browser notifications
-                "--headless",
-                "--incognito",  // Opens Chrome in incognito mode
+//                "--headless",
+//                "--incognito",  // Opens Chrome in incognito mode
                 "--disable-gpu",  // Disables GPU hardware acceleration (useful for headless mode)
                 "--no-sandbox",  // Disables the sandbox (may help with certain CI environments)
                 "--disable-dev-shm-usage"  // Addresses issues with /dev/shm size on certain systems
