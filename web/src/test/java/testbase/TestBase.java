@@ -100,8 +100,8 @@ protected static String DRIVER_URL;
                 "--start-maximized",  // Starts Chrome maximized
                 "--disable-infobars",  // Disables the info bar
                 "--disable-notifications",  // Disables browser notifications
-//                "--headless",
-//                "--incognito",  // Opens Chrome in incognito mode
+                "--headless",
+                "--incognito",  // Opens Chrome in incognito mode
                 "--disable-gpu",  // Disables GPU hardware acceleration (useful for headless mode)
                 "--no-sandbox",  // Disables the sandbox (may help with certain CI environments)
                 "--disable-dev-shm-usage"  // Addresses issues with /dev/shm size on certain systems
