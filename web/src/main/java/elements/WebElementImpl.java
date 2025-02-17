@@ -45,7 +45,9 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public String getText() {
-        return (String) JsonParser.findValueByKey(HttpMethodExecutor.doGetRequest(EndPoints.buildEndpoint(EndPoints.GET_ELEMENT_TEXT, searchContext.elementId())), VALUE);
+        Response response = HttpMethodExecutor.doGetRequest(EndPoints.buildEndpoint(EndPoints.GET_ELEMENT_TEXT, searchContext.elementId()));
+        HandleExceptions.handleResponse(response, "Issue detected trying to fetch getText for WebElement: " + locator.toString());
+        return (String) JsonParser.findValueByKey(response, VALUE);
     }
 
     @Override

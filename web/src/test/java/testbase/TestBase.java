@@ -30,10 +30,10 @@ public class TestBase {
         // Check if envUrl is set, otherwise default to localhost with port
         if (envUrl != null) {
             // Append :51325 if not already included
-            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":9615";
+            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":9515";
         } else {
             // Default to localhost with port
-            DRIVER_URL = "http://localhost:9615";
+            DRIVER_URL = "http://localhost:9515";
         }
     }
 

@@ -63,6 +63,8 @@ public class WElementInvocationHandler implements InvocationHandler {
         } catch (Throwable e) {
             // Ensure correct exception propagation
             throw e.getCause();
+        } finally {
+            threadLocalElement.remove();
         }
     }
 
