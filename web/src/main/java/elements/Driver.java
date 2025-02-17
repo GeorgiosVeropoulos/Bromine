@@ -4,17 +4,10 @@ import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Set;
 
+/**
+ * Interface for all WebDriverAPI actions
+ */
 interface Driver {
-
-
-
-
-//    void open(String url);
-//
-//    @Nullable String getTitle();
-//
-//    void close();
-//    void quit();
 
     Timeouts timeouts();
 

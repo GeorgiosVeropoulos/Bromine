@@ -24,7 +24,6 @@ public abstract class WebDriver {
 
     protected static void runAndShutDownDriver(Runnable createProcess) {
         createProcess.run();
-
         // Register a shutdown hook to clean up the process when JVM exits
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (process != null && process.isAlive()) {
@@ -37,6 +36,9 @@ public abstract class WebDriver {
     protected WebDriver() {
     }
 
+    /**
+     * @return The current running WebDriver.
+     */
     public static WebDriver get() {
         return driver.get();
     }
@@ -55,23 +57,19 @@ public abstract class WebDriver {
     }
 
 
-//    @Override
     public void open(String url) {
         DriverClient.openURL(url);
     }
 
-//    @Override
     public String getTitle() {
         return DriverClient.title();
     }
 
-//    @Override
     @WillClose
     public void close() {
         DriverClient.Contexts.closeWindow();
     }
 
-//    @Override
     @WillClose
     public void quit() {
         DriverClient.closeSession();
@@ -80,7 +78,6 @@ public abstract class WebDriver {
 
 
 
-//    @Override
     public Driver.Navigation navigation() {
         return new navigation();
     }
@@ -114,7 +111,6 @@ public abstract class WebDriver {
         }
     }
 
-//    @Override
     public Driver.SwitchTo switchTo() {
         return new SwitchTo();
     }

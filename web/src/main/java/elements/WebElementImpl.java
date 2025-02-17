@@ -5,6 +5,7 @@ import json.JsonParser;
 
 import java.util.List;
 
+import static Constants.Constants.VALUE;
 import static elements.EndPoints.buildEndpoint;
 
 public class WebElementImpl implements WebElement {
@@ -37,32 +38,35 @@ public class WebElementImpl implements WebElement {
     @Override
     public void sendKeys(String text) {
         String endPoint = buildEndpoint(EndPoints.ELEMENT_SEND_KEYS, searchContext.elementId());
+        System.out.println("Will do request on sessionID: " + DriverClient.sessionId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, new JsonBuilder().addKeyValue("text", text).build());
         HandleExceptions.handleResponse(response, "Send keys issue");
     }
 
     @Override
     public String getText() {
-        return (String) JsonParser.findValueByKey(HttpMethodExecutor.doGetRequest(EndPoints.buildEndpoint(EndPoints.GET_ELEMENT_TEXT, searchContext.elementId())), "value");
+        return (String) JsonParser.findValueByKey(HttpMethodExecutor.doGetRequest(EndPoints.buildEndpoint(EndPoints.GET_ELEMENT_TEXT, searchContext.elementId())), VALUE);
     }
 
     @Override
     public String getTagName() {
         Response response = HttpMethodExecutor.doGetRequest(buildEndpoint(EndPoints.GET_ELEMENT_TAG_NAME, searchContext.elementId()));
         HandleExceptions.handleResponse(response,  "Issue detected trying to fetch getTagName for WebElement: " + locator.toString());
-        return (String) JsonParser.findValueByKey(response, "value");
+        return (String) JsonParser.findValueByKey(response, VALUE);
     }
 
     @Override
     public String getAttribute(String attributeName) {
         String endPoint = buildEndpoint(EndPoints.ELEMENT_ATTRIBUTE, searchContext.elementId(), attributeName);
-        return HttpMethodExecutor.doGetRequest(endPoint).getString("value");
+        Response response = HttpMethodExecutor.doGetRequest(endPoint);
+        HandleExceptions.handleResponse(response, "Error when trying to fetch getAttribute for WebElement: " + locator.toString());
+        return response.getString(VALUE);
     }
 
     @Override
     public String getProperty(String propertyName) {
         String endPoint = buildEndpoint(EndPoints.ELEMENT_PROPERTY, searchContext.elementId(), propertyName);
-        Object returnValue = HttpMethodExecutor.doGetRequest(endPoint).get("value");
+        Object returnValue = HttpMethodExecutor.doGetRequest(endPoint).get(VALUE);
         if (returnValue == null) {
             return null;
         }
@@ -74,7 +78,7 @@ public class WebElementImpl implements WebElement {
         String endPoint = buildEndpoint(EndPoints.IS_ELEMENT_DISPLAYED, searchContext.elementId());
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "");
-        return response.getBoolean("value");
+        return response.getBoolean(VALUE);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class WebElementImpl implements WebElement {
         String endPoint = buildEndpoint(EndPoints.IS_ELEMENT_ENABLED, searchContext.elementId());
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "");
-        return response.getBoolean("value");
+        return response.getBoolean(VALUE);
     }
 
     @Override
@@ -90,7 +94,7 @@ public class WebElementImpl implements WebElement {
         String endPoint = buildEndpoint(EndPoints.IS_ELEMENT_SELECTED, searchContext.elementId());
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "");
-        return response.getBoolean("value");
+        return response.getBoolean(VALUE);
     }
 
     @Override

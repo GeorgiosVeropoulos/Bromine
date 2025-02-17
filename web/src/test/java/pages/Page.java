@@ -16,4 +16,6 @@ public class Page {
     public WebElement myWork = $(Locator.xpath("(//a[contains(@href, '#')])[2]"));
 
     public WebElement aboutMe = $(Locator.xpath("(//a[contains(@href, '#')])[1]"));
+
+    public WebElement info = $(Locator.xpath("//*[@id='info']"));
 }

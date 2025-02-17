@@ -10,7 +10,10 @@ import java.lang.reflect.Method;
 // This class will handle all method invocations dynamically.
 public class WElementInvocationHandler implements InvocationHandler {
     private Locator locator;  // The locator to find the element
-    private WebElement realElement; // The actual WElement
+//    private WebElement realElement; // The actual WElement
+
+    // this was added to make sure parallel tests work properly in TestNG when multiple Test methods exist under the same Test class.
+    private static final ThreadLocal<WebElement> threadLocalElement = new ThreadLocal<>();
 
     public WElementInvocationHandler(Locator locator) {
         this.locator = locator;
@@ -34,7 +37,7 @@ public class WElementInvocationHandler implements InvocationHandler {
         if (method.getName().equals("exists") && args == null)  {
             try {
                 System.out.println("was this called?");
-                realElement = fetchElementFromAPI();
+                threadLocalElement.set(fetchElementFromAPI());
             } catch (WebDriverException e) {
                 return Boolean.FALSE;
             }
@@ -50,27 +53,13 @@ public class WElementInvocationHandler implements InvocationHandler {
         }
 
         // If realElement is null, fetch it when a real method on WebElement is called
-        if (realElement == null) {
+        if (threadLocalElement.get() == null) {
             System.out.println("Lazy initialization: Fetching real element for " + locator);
-            realElement = fetchElementFromAPI();
+            threadLocalElement.set(fetchElementFromAPI());
         }
 
-        // Dynamically check annotations using the stack trace
-//        Field field = findAnnotatedFieldFromStackTrace(proxy);
-//        if (field != null) {
-//            for (Annotation annotation : field.getDeclaredAnnotations()) {
-//                if (annotation.annotationType() == Interactable.class) {
-//                    System.out.println("Ensuring element is interactable for field: " + field.getName());
-//                    if (!realElement.isEnabled()) {
-//                        throw new IllegalStateException("Element is not enabled for interaction: " + by);
-//                    }
-//                }
-//            }
-//        }
-
-        // Delegate method execution to realElement
         try {
-            return method.invoke(realElement, args);
+            return method.invoke(threadLocalElement.get(), args);
         } catch (Throwable e) {
             // Ensure correct exception propagation
             throw e.getCause();

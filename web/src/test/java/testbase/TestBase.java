@@ -22,7 +22,7 @@ import java.util.Map;
 @Slf4j
 @Execution(ExecutionMode.CONCURRENT)
 public class TestBase {
-protected static String DRIVER_URL;
+    protected static String DRIVER_URL;
 
     static {
         String envUrl = System.getenv("DRIVER_URL");
@@ -30,26 +30,20 @@ protected static String DRIVER_URL;
         // Check if envUrl is set, otherwise default to localhost with port
         if (envUrl != null) {
             // Append :51325 if not already included
-            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":9515";
+            DRIVER_URL = envUrl.contains(":") ? envUrl : envUrl + ":9615";
         } else {
             // Default to localhost with port
-            DRIVER_URL = "http://localhost:9515";
+            DRIVER_URL = "http://localhost:9615";
         }
     }
 
     public TestBase() {
-//        ChromeCapabilities json = chromeCapabilities();
-//        String json = firefoxCapabilities();
+        System.setProperty("webdriver.chrome.logfile", "chromedriver.log");
+        System.setProperty("webdriver.chrome.verboseLogging", "true");
         Configuration.setDriverUrl(DRIVER_URL);
-        Configuration.setBrowserType(BrowserType.CHROME);
         Configuration.network()
                 .setReadTimeout(Duration.ofSeconds(45))
                 .setConnectionTimeout(Duration.ofSeconds(45));
-//        Configuration.setJsonConfig(json);
-//        Configuration.setDriverPath(Path.of(System.getProperty("user.dir"),"/src/main/resources"));
-//        ScreenShot.config.setImageFormat("png");%
-//        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "screenshots"));
-
     }
 
     @BeforeEach
@@ -57,6 +51,7 @@ protected static String DRIVER_URL;
 //        Configuration.setDriverUrl(DRIVER_URL);
 //        log.info("DRIVER URL WAS {}", DRIVER_URL);
 //        new ChromeDriver();
+//        new ChromeDriver(new ChromeCapabilities().build());
         new ChromeDriver(chromeCapabilities());
 
 //        new GeckoDriver();
@@ -95,12 +90,12 @@ protected static String DRIVER_URL;
         prefs.put("download.prompt_for_download", false);  // Auto download without confirmation
         prefs.put("download.directory_upgrade", true);
         prefs.put("safebrowsing.enabled", true);  // Enable Safe Browsing
-        prefs.put("platformName", "LINUX");
+//        prefs.put("platformName", "LINUX");
         return new ChromeCapabilities().addArguments(
                 "--start-maximized",  // Starts Chrome maximized
                 "--disable-infobars",  // Disables the info bar
                 "--disable-notifications",  // Disables browser notifications
-                "--headless",
+//                "--headless",
                 "--incognito",  // Opens Chrome in incognito mode
                 "--disable-gpu",  // Disables GPU hardware acceleration (useful for headless mode)
                 "--no-sandbox",  // Disables the sandbox (may help with certain CI environments)

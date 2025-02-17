@@ -81,7 +81,7 @@ public class HttpMethodExecutor {
      */
     private static Response doRequest(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException{
 
-        String URL = Configuration.getDriverUrl()  + endPoint;
+        String URL = Configuration.getDriverUrl() + endPoint;
         log.info("Will do Request on {}", URL);
         URL url = new URL(URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -98,8 +98,8 @@ public class HttpMethodExecutor {
             }
         }
 
-
         int responseCode = connection.getResponseCode();
+        log.info("HTTP Response Code: {}", responseCode);
 
         if (responseCode >= 200 && responseCode < 300) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
@@ -108,10 +108,8 @@ public class HttpMethodExecutor {
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
-
-//                System.out.println(response);
+                log.info("Response Body: {}", response.toString());
                 return new Response(response.toString());
-//                return JsonParser.parse(response.toString());
             }
         } else {
             // Error response: read from ErrorStream
@@ -122,9 +120,8 @@ public class HttpMethodExecutor {
                 while ((responseLine = br.readLine()) != null) {
                     errorResponse.append(responseLine.trim());
                 }
-                System.err.println("Error response: " + errorResponse.toString());
+                log.error("Error Response Body: {}", errorResponse.toString());
                 return new Response(errorResponse.toString());
-//                return JsonParser.parse(errorResponse.toString());
             }
         }
     }

@@ -6,12 +6,14 @@ import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
 import lombok.extern.slf4j.Slf4j;
+import sleeper.Sleeper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -28,7 +30,7 @@ public class ChromeDriver extends WebDriver {
 
 
     private static void initialize() {
-        if (isChromeSelected() && !initialized) {
+        if (!initialized) {
             lock.lock();
             try {
                 if (!initialized) {  // Double-checked locking
@@ -68,17 +70,11 @@ public class ChromeDriver extends WebDriver {
             throw new UnsupportedOperationException("ChromeDriver couldn't be created. Make sure your " +
                     "jsonConfig contains correct structure for Chrome.");
         }
-        if (!isChromeSelected()) {
-            throw new IllegalArgumentException("Tried to create a Chrome Browser when the BrowserType selected was: "
-                    + Configuration.getBrowserType().name());
-        }
-
+        Configuration.setBrowserType(BrowserType.CHROME);
         initialize();
-        log.info("Before starting session");
         DriverClient.startSession(chromeCapabilitiesAsString);
         map.put(Thread.currentThread().getId(), DriverClient.sessionId());
         set(this);
-        log.info("after starting session");
     }
 
 
@@ -123,12 +119,52 @@ public class ChromeDriver extends WebDriver {
 
             String urlString = Configuration.getDriverUrl();
             String port = urlString.substring(urlString.lastIndexOf(':') + 1);
-            ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath, "--port=" + port, "--host:0.0.0.0", "--verbose");
-
+            ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath,
+                    "--port=" + port,
+                    "--host=0.0.0.0"
+//                    "--verbose",
+//                    "--log-level=ALL"
+            );
+            BufferedReader reader = null;
             try {
                 process = processBuilder.start();
+                reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                // Flag to track if the process has started properly
+                boolean processReady = false;
+
+                // Loop to periodically check the process's output
+                while (!processReady) {
+                    // Check if there's any output from the process
+                    if (reader.ready()) {
+                        String line = reader.readLine();
+                        if (line != null && line.contains("started")) { // Modify the condition to suit your needs
+                            processReady = true;
+                            System.out.println("Process is ready!");
+                        }
+                    }
+
+                    // You can do other work here while waiting (if necessary)
+                    // For example, check if the process is still running:
+                    if (!process.isAlive()) {
+                        System.out.println("Process has terminated unexpectedly.");
+                        break;
+                    }
+
+                    // A small sleep to prevent a tight loop, allowing for CPU efficiency
+                    Sleeper.sleep(Duration.ofMillis(500));
+                }
+//                Sleeper.sleepInSeconds(5);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to start ChromeDriver", e);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();  // Handle the exception if closing the reader fails
+                    }
+                }
             }
         }
 

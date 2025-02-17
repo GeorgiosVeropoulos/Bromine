@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Default Suite" parallel="methods">
+    <test thread-count="5" name="Bromine">
+        <classes>
+            <class name="client.testng.WebElementsParallelTest"/>
+        </classes>
+    </test> <!-- Bromine -->
+</suite> <!-- Default Suite -->

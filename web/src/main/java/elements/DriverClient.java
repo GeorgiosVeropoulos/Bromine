@@ -24,8 +24,11 @@ import static elements.HttpMethodExecutor.*;
 @Slf4j
 abstract class DriverClient {
      // URL where the WebDriver is running
+
+    /**
+     * Each thread should handle 1 and only 1 sessionId
+     */
     protected static final ThreadLocal<String> SESSION_IDS = new ThreadLocal<>();
-//    private static final Logger logger = Logger.getLogger(DriverClient.class.getName());
 
 
     protected static String sessionId() {
@@ -230,7 +233,7 @@ abstract class DriverClient {
         }
 
         protected static Set<String> getWindowHandles() {
-            Map<String, Object> json = doGetRequest(EndPoints.GET_WINDOW_HANDLES);
+            Response json = doGetRequest(EndPoints.GET_WINDOW_HANDLES);
             Object handles = Objects.requireNonNull(JsonParser.findValueByKey(json, "value"));
             if (!(handles instanceof ArrayList<?>)) {
                 return new HashSet<>();
@@ -279,7 +282,6 @@ abstract class DriverClient {
                 Response response = doPostRequest(EndPoints.SWITCH_TO_FRAME, json);
                 response.getString("value");
             } catch (NoSuchElementException e) {
-                System.out.println("Throwing NoSuchFrameException");
                 throw new NoSuchFrameException("Frame " + locator.toString() + " was not found!");
             }
         }

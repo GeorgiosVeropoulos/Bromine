@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -52,7 +53,7 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         String installedChromeVersion = getInstalledChromeVersion();
 
         log.info("installedChromeVersion fetched {}", installedChromeVersion);
-        if (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion)) {
+        if (installedChromeVersion.isEmpty() || (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion))) {
             updateChromedriver(version);
             log.info("update chrome Driver");
         }
@@ -128,20 +129,25 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
         Scanner scanner = new Scanner(process.getInputStream());
         while (scanner.hasNext()) {
-            String line = scanner.nextLine();
-            if (platform == Platform.WINDOWS && line.contains("version")) {
-                // Windows: Get the major version
-                version = line.split("\\s+")[line.split("\\s+").length - 1].split("\\.")[0];
-            } else if (line.toLowerCase().contains("chrome")) {
-                // Linux/macOS: Extract the first three numbers
+            String line = scanner.nextLine().trim(); // Trim leading/trailing whitespace
+            if (platform == Platform.WINDOWS && line.startsWith("version")) {
+                // Windows: Extract the version from the line
+                String[] parts = line.split("\\s+"); // Split by whitespace
+                if (parts.length >= 3) { // Ensure the line has enough parts
+                    version = parts[2].split("\\.")[0]; // Extract the major version
+                    break; // Exit the loop once the version is found
+                }
+            } else if (platform != Platform.WINDOWS && line.toLowerCase().contains("chrome")) {
+                // Linux/macOS: Extract the version from the command output
                 version = line.replaceAll("[^\\d.]", "").trim(); // Remove non-numeric characters
                 String[] parts = version.split("\\.");
                 if (parts.length >= 3) {
                     version = parts[0] + "." + parts[1] + "." + parts[2];
                 }
-                break;
+                break; // Exit the loop once the version is found
             }
         }
+        scanner.close(); // Close the scanner to release resources
 
         if (version == null) {
             throw new IllegalStateException("Unable to determine installed Chrome version.");
@@ -217,12 +223,11 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
     protected static Process getChromeProcess() {
         Process process = null;
         try {
-            process = switch (UpdateDriverHelper.platform) {
-                case WINDOWS ->
-                        Runtime.getRuntime().exec("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+            process = switch (platform) {
+                case WINDOWS -> Runtime.getRuntime().exec(new String[]{
+                        "cmd.exe", "/c", "reg", "query", "HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon", "/v", "version"});
                 case LINUX -> Runtime.getRuntime().exec("/opt/google/chrome/google-chrome --version");
-                case MAC ->
-                        Runtime.getRuntime().exec("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version");
+                case MAC -> Runtime.getRuntime().exec("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version");
             };
 
         } catch (IOException platformException) {

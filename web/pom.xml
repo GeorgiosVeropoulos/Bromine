@@ -39,13 +39,14 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- JUnit Platform Surefire Provider (Updated) -->
-<!--        <dependency>-->
-<!--            <groupId>org.junit.platform</groupId>-->
-<!--            <artifactId>junit-platform-surefire-provider</artifactId>-->
-<!--            <version>1.3.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
 
         <!-- Annotation API (Java 17 Support) -->
         <dependency>

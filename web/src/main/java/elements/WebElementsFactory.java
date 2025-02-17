@@ -7,9 +7,9 @@ import java.util.Objects;
 
 public final class WebElementsFactory {
 
-    private WebElementsFactory() {
-        throw new IllegalArgumentException("WElementFactory should NOT be instantiated!");
-    }
+//    private WebElementsFactory() {
+//        throw new IllegalArgumentException("WElementFactory should NOT be instantiated!");
+//    }
 
 
     @CheckReturnValue

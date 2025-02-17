@@ -20,7 +20,7 @@ public class Configuration {
     @Getter @Setter
     private static String driverUrl;
 
-    @Getter @Setter
+    @Getter @Setter @Deprecated(forRemoval = true, since = "Browsers should set this")
     private static BrowserType browserType;
 
     @Getter @Setter

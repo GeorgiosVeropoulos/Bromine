@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 // This class will handle all method invocations dynamically for WElementList.
 public class WElementListInvocationHandler implements InvocationHandler {
     private Locator locator;  // The locator to find the list of elements
-    private WebElements realElementList;  // The actual WElementList (list of elements)
+    private static final ThreadLocal<WebElements> elementsThreadLocal = new ThreadLocal<>();
 
     public WElementListInvocationHandler(Locator locator) {
         this.locator = locator;
@@ -18,12 +18,12 @@ public class WElementListInvocationHandler implements InvocationHandler {
 
 
         System.out.println("Called invoke for " + locator);
-        if (realElementList == null) {
-            realElementList = fetchElementsFromAPI();
+        if (elementsThreadLocal.get() == null) {
+            elementsThreadLocal.set(fetchElementsFromAPI());
         }
 
         // Delegate the method execution to the real WElementList
-        return method.invoke(realElementList, args);
+        return method.invoke(elementsThreadLocal.get(), args);
     }
 
     // Fetches the list of elements from the API using the By locator
