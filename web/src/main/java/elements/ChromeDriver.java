@@ -121,8 +121,8 @@ public class ChromeDriver extends WebDriver {
             String port = urlString.substring(urlString.lastIndexOf(':') + 1);
             ProcessBuilder processBuilder = new ProcessBuilder(chromedriverPath,
                     "--port=" + port,
-                    "--host=0.0.0.0"
-//                    "--verbose",
+                    "--host:0.0.0.0"
+//                    "--verbose"
 //                    "--log-level=ALL"
             );
             BufferedReader reader = null;

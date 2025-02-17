@@ -38,8 +38,8 @@ public class TestBase {
     }
 
     public TestBase() {
-        System.setProperty("webdriver.chrome.logfile", "chromedriver.log");
-        System.setProperty("webdriver.chrome.verboseLogging", "true");
+//        System.setProperty("webdriver.chrome.logfile", "chromedriver.log");
+//        System.setProperty("webdriver.chrome.verboseLogging", "true");
         Configuration.setDriverUrl(DRIVER_URL);
         Configuration.network()
                 .setReadTimeout(Duration.ofSeconds(45))
@@ -90,7 +90,7 @@ public class TestBase {
         prefs.put("download.prompt_for_download", false);  // Auto download without confirmation
         prefs.put("download.directory_upgrade", true);
         prefs.put("safebrowsing.enabled", true);  // Enable Safe Browsing
-//        prefs.put("platformName", "LINUX");
+        prefs.put("platformName", "LINUX");
         return new ChromeCapabilities().addArguments(
                 "--start-maximized",  // Starts Chrome maximized
                 "--disable-infobars",  // Disables the info bar
