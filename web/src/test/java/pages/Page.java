@@ -12,6 +12,8 @@ public class Page {
 
     public WebElements elementList = $$(Locator.xpath("//a[contains(@href, '#')]"));
 
+    public WebElements navBarLis = $$(Locator.xpath("//nav[@id='nav']//ul//li"));
+
 
     public WebElement myWork = $(Locator.xpath("(//a[contains(@href, '#')])[2]"));
 

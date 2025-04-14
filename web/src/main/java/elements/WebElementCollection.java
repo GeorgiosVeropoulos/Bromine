@@ -65,4 +65,9 @@ public abstract class WebElementCollection implements WebElements {
         return elements.get(index);
     }
 
+    @Override
+    public Locator getLocator() {
+        return locator;
+    }
+
 }

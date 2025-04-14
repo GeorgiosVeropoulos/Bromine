@@ -43,7 +43,7 @@ public class HandleExceptions {
                     throw new ElementClickInterceptedException(customMessage + "\n" +clickablePointText + "\n" + otherElementText);
                     // Add more cases for different error messages as needed
                 default:
-                    throw new RuntimeException("An unexpected error occurred: " + errorMessage);
+                    throw new WebDriverException("An unexpected error occurred: " + errorMessage);
             }
         }
     }

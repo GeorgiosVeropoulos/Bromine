@@ -12,7 +12,8 @@ import static elements.WebElementsFactory.$$;
 
 public class WebElementsParallelTest extends TestBaseTestNG {
 
-    WebElements elementList = $$(Locator.xpath("//a[contains(@href, '#')]"));
+    WebElements elementList = $$(Locator.xpath("//a[@id = 'adasdsadqweq']"));
+    WebElements elementList2 = $$(Locator.xpath("//a[contains(@href, '#')]"));
 
 
     public Page page;
@@ -27,8 +28,11 @@ public class WebElementsParallelTest extends TestBaseTestNG {
     public void listTest() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
         System.out.println(0);
-        System.out.println(elementList.size());
-        elementList.get(0).click();
+//        System.out.println(elementList.size());
+        System.out.println(elementList.getLocator());
+        System.out.println(elementList2.size());
+        System.out.println("Final message");
+//        elementList.get(0).click();
     }
 
     @Test

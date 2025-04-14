@@ -28,7 +28,7 @@ public class Configuration {
 
 
     public static NetworkSettings network() {
-        return new NetworkSettings();
+        return NetworkSettings.getInstance();
     }
 
 

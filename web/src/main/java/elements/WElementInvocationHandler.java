@@ -30,7 +30,7 @@ public class WElementInvocationHandler implements InvocationHandler {
             return method.invoke(this, args);  // handle equals, hashCode, etc.
         }
 
-        if (method.getName().equals("getBy") && args == null) {
+        if (method.getName().equals("getLocator") && args == null) {
             return locator;
         }
 
@@ -53,7 +53,7 @@ public class WElementInvocationHandler implements InvocationHandler {
         }
 
         // If realElement is null, fetch it when a real method on WebElement is called
-        if (threadLocalElement.get() == null) {
+        if (threadLocalElement.get() == null || threadLocalElement.get().getLocator() != locator) {
             System.out.println("Lazy initialization: Fetching real element for " + locator);
             threadLocalElement.set(fetchElementFromAPI());
         }
@@ -62,9 +62,8 @@ public class WElementInvocationHandler implements InvocationHandler {
             return method.invoke(threadLocalElement.get(), args);
         } catch (Throwable e) {
             // Ensure correct exception propagation
-            throw e.getCause();
-        } finally {
             threadLocalElement.remove();
+            throw e.getCause();
         }
     }
 

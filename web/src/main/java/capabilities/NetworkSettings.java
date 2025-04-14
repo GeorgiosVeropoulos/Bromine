@@ -12,6 +12,14 @@ public class NetworkSettings {
     private int readTimeout = 60_000;
     private int connectionTimeout = 60_000;
 
+    // Bill Pugh Singleton Implementation
+    private static class NetworkSettingsHolder {
+        private static final NetworkSettings INSTANCE = new NetworkSettings();
+    }
+    public static NetworkSettings getInstance() {
+        return NetworkSettingsHolder.INSTANCE;
+    }
+
     public NetworkSettings setReadTimeout(Duration duration) {
         readTimeout = getTimeout(duration);
         return this;

@@ -235,10 +235,18 @@ abstract class DriverClient {
         protected static Set<String> getWindowHandles() {
             Response json = doGetRequest(EndPoints.GET_WINDOW_HANDLES);
             Object handles = Objects.requireNonNull(JsonParser.findValueByKey(json, "value"));
-            if (!(handles instanceof ArrayList<?>)) {
+            if (!(handles instanceof List<?>)) {
                 return new HashSet<>();
             }
-            return new HashSet<>((List<String>) handles);
+            Set<String> resultSet = new HashSet<>();
+            for (Object handle : (List<?>) handles) {
+                if (handle instanceof String) {
+                    resultSet.add((String) handle);
+                } else {
+                    throw new IllegalStateException("Unexpected non-string value in window handles list: " + handle);
+                }
+            }
+            return resultSet;
         }
 
         protected static void newWindow() {
@@ -251,6 +259,7 @@ abstract class DriverClient {
          * Since we can't open tabs if we don't create a new window we can use JS scripts to accomplish this;
          * Will use JS if normal window can't work.
          */
+        //TODO rework this
         protected static void newTab() {
             Set<String> beforeHandles = getWindowHandles();
             if (beforeHandles.size() != 1) {
@@ -274,15 +283,16 @@ abstract class DriverClient {
         }
 
         protected static void switchToFrame(WebElement element) {
-            Locator locator = element.getLocator();
+            SearchContext searchContext = element.getSearchContext();
+            if (searchContext == null) {
+                throw new NoSuchElementException("Frame " + element.getLocator().toString() + " was not found!");
+            }
             try {
-                SearchContext searchContext = DriverClient.getElement(locator);
-//                String key = searchContext.elementId.keySet().iterator().next();
                 String json = String.format("{\"id\": {\"%s\": \"%s\"}}", searchContext.elementName(), searchContext.elementId());
                 Response response = doPostRequest(EndPoints.SWITCH_TO_FRAME, json);
                 response.getString("value");
             } catch (NoSuchElementException e) {
-                throw new NoSuchFrameException("Frame " + locator.toString() + " was not found!");
+                throw new NoSuchFrameException("Frame " + element.getLocator().toString() + " was not found!");
             }
         }
 

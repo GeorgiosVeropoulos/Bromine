@@ -41,4 +41,6 @@ public interface WebElements extends Iterable<WebElement> {
      * @return the WebElement if it exists or throws List based exceptions.
      */
     WebElement get(int index);
+
+    Locator getLocator();
 }

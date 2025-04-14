@@ -1,6 +1,8 @@
 package elements;
 
 
+import exceptions.WebDriverException;
+
 /**
  * A handy way to interact with Select tag elements
  */
@@ -53,7 +55,7 @@ public class Select {
         }
     }
 
-    private static class NoOptionSelectedException extends RuntimeException {
+    private static class NoOptionSelectedException extends WebDriverException {
         public NoOptionSelectedException() {
             super("The curren't <select> doesn't have any options 'selected'!");
         }

@@ -33,6 +33,8 @@ public class TestBaseTestNG {
         Configuration.network()
                 .setReadTimeout(Duration.ofSeconds(45))
                 .setConnectionTimeout(Duration.ofSeconds(45));
+
+        Math.random();
     }
 
     @BeforeMethod(alwaysRun = true)

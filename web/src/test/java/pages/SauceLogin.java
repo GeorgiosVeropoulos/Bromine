@@ -8,4 +8,5 @@ import static elements.WebElementsFactory.$;
 public class SauceLogin {
 
     public WebElement username = $(Locator.id("user-name"));
+    public WebElement loginBtn = $(Locator.id("login-button"));
 }

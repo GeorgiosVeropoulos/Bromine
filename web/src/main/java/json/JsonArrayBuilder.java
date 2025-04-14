@@ -2,6 +2,7 @@ package json;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class JsonArrayBuilder {
     private final List<Object> jsonArray;
@@ -36,11 +37,13 @@ public class JsonArrayBuilder {
         return jsonBuilder.toString();
     }
 
-    private String valueToJson(Object value) {
-        if (value instanceof String) {
+    private Object valueToJson(Object value) {
+        if (value instanceof Integer) {
+            return value; // Ensure integers are directly serialized
+        } else if (value instanceof String) {
             return "\"" + value + "\"";
         } else if (value instanceof Number || value instanceof Boolean) {
-            return value.toString();
+            return value;
         } else if (value instanceof JsonObjectBuilder) {
             return ((JsonObjectBuilder) value).build(); // Call build() on JsonObjectBuilder
         } else if (value instanceof JsonArrayBuilder) {
