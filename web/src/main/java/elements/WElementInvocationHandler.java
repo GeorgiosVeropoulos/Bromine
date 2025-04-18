@@ -3,7 +3,6 @@ package elements;
 import exceptions.NoSuchElementException;
 import exceptions.WebDriverException;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -46,7 +45,7 @@ public class WElementInvocationHandler implements InvocationHandler {
         if (method.getName().equals("getSearchContext") && args == null)  {
             try {
                 System.out.println("invoke getSearchContext this called?");
-                return DriverClient.getElement(locator);
+                return DriverClient.findElement(locator);
             } catch (WebDriverException e) {
                 return null;
             }
@@ -69,7 +68,7 @@ public class WElementInvocationHandler implements InvocationHandler {
 
     // Fetches the element from the API using the By locator
     private WebElement fetchElementFromAPI() throws NoSuchElementException {
-        return new WebElementImpl(DriverClient.getElement(locator), locator); // Return the real element
+        return new WebElementImpl(DriverClient.findElement(locator), locator); // Return the real element
     }
 }
 

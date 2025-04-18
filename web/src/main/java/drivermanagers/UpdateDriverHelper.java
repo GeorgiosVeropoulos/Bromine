@@ -3,6 +3,7 @@ package drivermanagers;
 
 import ch.qos.logback.classic.spi.PlatformInfo;
 import elements.ChromeDriver;
+import files.FileLoader;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -37,12 +38,12 @@ public class UpdateDriverHelper {
         }
 
         try {
-            URL driversUrl = UpdateDriverHelper.class.getClassLoader().getResource("drivers/");
+            URL driversUrl = FileLoader.getURLFromPath("drivers/");
             Path driversPath;
 
             if (driversUrl == null) {
                 // Fallback: Create the directory in your desired location
-                driversPath = Paths.get("target/classes/drivers");
+                driversPath = Paths.get("target","classes", "drivers");
                 Files.createDirectories(driversPath);
                 log.info("Created fallback drivers directory: {}", driversPath.toAbsolutePath());
             } else {

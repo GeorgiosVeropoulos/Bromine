@@ -49,7 +49,7 @@ public class Select {
 
 
 
-    private static class SelectTagNotFoundException extends RuntimeException{
+    private static class SelectTagNotFoundException extends WebDriverException {
         public SelectTagNotFoundException(String actualTagName) {
             super("Element should have <select> tag but has <" + actualTagName +">");
         }

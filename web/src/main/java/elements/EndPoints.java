@@ -27,9 +27,7 @@ public abstract class EndPoints {
     protected static final String GET_PAGE_SOURCE = "/source";
 
     // === Window Management ===
-    protected static final String GET_WINDOW_HANDLE = "/window";
-    protected static final String CLOSE_WINDOW = "/window";
-    protected static final String SWITCH_TO_WINDOW = "/window";
+    protected static final String WINDOW = "/window";
     protected static final String GET_WINDOW_HANDLES = "/window/handles";
     protected static final String NEW_WINDOW = "/window/new";
     protected static final String GET_WINDOW_RECT = "/window/rect";

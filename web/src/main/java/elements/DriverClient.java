@@ -1,6 +1,5 @@
 package elements;
 
-import capabilities.Configuration;
 import exceptions.NoSuchElementException;
 import exceptions.NoSuchFrameException;
 import exceptions.NoSuchWindowException;
@@ -11,9 +10,7 @@ import sleeper.Sleeper;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.logging.Logger;
 
-import static Constants.Constants.TWO_SECONDS;
 import static elements.EndPoints.buildEndpoint;
 import static elements.HttpMethodExecutor.*;
 
@@ -92,15 +89,15 @@ abstract class DriverClient {
         SESSION_IDS.remove();
     }
 
-    protected static SearchContext getElement(Locator locator) {
+    protected static SearchContext findElement(Locator locator) {
         String jsonToSend =  new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build();
         Response response = doPostRequest(EndPoints.FIND_ELEMENT , jsonToSend);
         HandleExceptions.handleResponse(response, "Element Not found using: " + locator.toString());
-        return new SearchContext(Collections.unmodifiableMap(response.getValueAsMap()));
+        return new SearchContext(response.getValueAsMap());
     }
 
 
-    protected static List<WebElement> getElements(Locator locator) {
+    protected static List<WebElement> findElements(Locator locator) {
         String jsonToSend = new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build();
         Map<String, Object> json = doPostRequest(EndPoints.FIND_ELEMENTS, jsonToSend);
          ArrayList<HashMap<String, String>> valueMap = (ArrayList<HashMap<String, String>>) json.get("value");
@@ -112,7 +109,7 @@ abstract class DriverClient {
         return elements;
     }
 
-    protected static SearchContext getElementWithin(String parentId, Locator locator) {
+    protected static SearchContext findElementWithin(String parentId, Locator locator) {
         String endPoint = buildEndpoint(EndPoints.FIND_ELEMENT_FROM_ELEMENT, parentId);
         Response response = doPostRequest(endPoint, new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build());
         HandleExceptions.handleResponse(response, "Could not find element: " + locator.toString());
@@ -120,7 +117,7 @@ abstract class DriverClient {
     }
 
     // Retrieves multiple child elements within a parent element's context
-    protected static List<WebElement> getElementsWithin(String parentId, Locator locator) {
+    protected static List<WebElement> findElementsWithin(String parentId, Locator locator) {
         String endPoint = buildEndpoint(EndPoints.FIND_ELEMENTS_FROM_ELEMENT, parentId);
         Response response = doPostRequest(endPoint, new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build());
         // Parse the response to get element IDs
@@ -194,7 +191,7 @@ abstract class DriverClient {
     protected static class Contexts {
 
         protected static String getWindowHandle() {
-            Map<String, Object> json = doGetRequest(EndPoints.GET_WINDOW_HANDLE);
+            Map<String, Object> json = doGetRequest(EndPoints.WINDOW);
             Object valueContent = JsonParser.findValueByKey(json, "value");
             if (valueContent instanceof String) {
                 return (String) valueContent;
@@ -210,7 +207,7 @@ abstract class DriverClient {
         protected static void closeWindow() {
 
             boolean lastWindow = getWindowHandles().size() == 1;
-            doDeleteRequest(EndPoints.GET_WINDOW_HANDLE);
+            doDeleteRequest(EndPoints.WINDOW);
             if (lastWindow) {
                 SESSION_IDS.remove();
             } else {
@@ -227,7 +224,7 @@ abstract class DriverClient {
          * @throws NoSuchWindowException if no window is found with the specified handle.
          */
         protected static void switchToWindow(String handle) {
-            Response response = doPostRequest(EndPoints.GET_WINDOW_HANDLE,  new JsonBuilder().addKeyValue("handle", handle).build());
+            Response response = doPostRequest(EndPoints.WINDOW,  new JsonBuilder().addKeyValue("handle", handle).build());
             String m  = (String) JsonParser.findValueByKey(response, "message");
             HandleExceptions.handleResponse(response, "Window with handle: " + handle + " wasn't found!");
         }

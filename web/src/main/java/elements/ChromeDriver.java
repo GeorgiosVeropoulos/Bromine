@@ -5,11 +5,14 @@ import capabilities.BrowserType;
 import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
+import files.FileLoader;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import sleeper.Sleeper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -86,9 +89,9 @@ public class ChromeDriver extends WebDriver {
 
             String path = Configuration.getDriverPath() != null ? String.valueOf(Configuration.getDriverPath()) : "drivers";
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                resourcePath = path + "/chromedriver.exe";
+                resourcePath = "/chromedriver.exe";
             } else if (System.getProperty("os.name").toLowerCase().contains("nix") || System.getProperty("os.name").toLowerCase().contains("nux")) {
-                resourcePath = path + "/chromedriver"; // On Linux or macOS, use the plain executable
+                resourcePath = "chromedriver"; // On Linux or macOS, use the plain executable
             } else {
                 throw new UnsupportedOperationException("Unsupported OS for ChromeDriver initialization");
             }
@@ -96,13 +99,10 @@ public class ChromeDriver extends WebDriver {
             // Get the resource URL
             String p = "";
             if (Configuration.getDriverPath() == null) {
-                URL url = DriverClient.class.getClassLoader().getResource(resourcePath);
-                if (url == null) {
-                    throw new RuntimeException("Resource not found: " + resourcePath);
-                }
+                URL url  = FileLoader.getURLFromPath(path, resourcePath);
                 p = url.getPath();
             } else {
-                if (!Files.exists(Paths.get(resourcePath))) {
+                if (!Files.exists(Paths.get(path, resourcePath))) {
                     throw new RuntimeException("FilePath " + path + " doesn't contain chromedriver");
                 }
                 p = resourcePath;
@@ -152,11 +152,11 @@ public class ChromeDriver extends WebDriver {
                     }
 
                     // A small sleep to prevent a tight loop, allowing for CPU efficiency
-                    Sleeper.sleep(Duration.ofMillis(500));
+                    Sleeper.sleep(Duration.ofMillis(100));
                 }
 //                Sleeper.sleepInSeconds(5);
             } catch (IOException e) {
-                throw new RuntimeException("Failed to start ChromeDriver", e);
+                throw new RuntimeException("Failed to start ChromeDriver" + e.getMessage(), e);
             } finally {
                 if (reader != null) {
                     try {

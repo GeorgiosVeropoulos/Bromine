@@ -2,6 +2,7 @@ package drivermanagers;
 
 import download.Download;
 import elements.ChromeDriver;
+import files.FileLoader;
 import json.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,11 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
     static {
         if (platform == Platform.WINDOWS) {
-            chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver.exe");
+//            chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver.exe");
+            chromedriverResource = FileLoader.getURLFromPath("drivers", "chromedriver.exe");
         } else if (platform == Platform.LINUX) {
-            chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver");
+//            chromedriverResource = ChromeDriver.class.getClassLoader().getResource("drivers/chromedriver");
+            chromedriverResource = FileLoader.getURLFromPath("drivers", "chromedriver");
         } else {
             throw new UnsupportedOperationException("Unsupported OS for ChromeDriver");
         }
@@ -178,6 +181,7 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
         // Form the URL for downloading the specific ChromeDriver version
         String downloadUrl = CHROMEDRIVER_URL + chromeVersion + "/" + platformString + "/chromedriver-" + platformString + ".zip";
+        log.info("Downloading from: " + downloadUrl);
         Path zipFilePath = DRIVERS_PACKAGE.resolve("chromedriver.zip");
 
         // Step 1: Download the zip file
@@ -233,11 +237,6 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         } catch (IOException platformException) {
             throw new RuntimeException(platformException.getCause());
         }
-
         return process;
     }
-
-
-
-
 }

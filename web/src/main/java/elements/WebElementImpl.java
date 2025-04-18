@@ -3,7 +3,6 @@ package elements;
 import json.JsonBuilder;
 import json.JsonParser;
 
-import java.time.Duration;
 import java.util.List;
 
 import static Constants.Constants.VALUE;
@@ -107,13 +106,13 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public WebElement $(Locator locator) {
-        SearchContext childSearchContext = DriverClient.getElementWithin(searchContext.elementId(), locator);
+        SearchContext childSearchContext = DriverClient.findElementWithin(searchContext.elementId(), locator);
         return new WebElementImpl(childSearchContext, locator);
     }
 
     @Override
     public WebElements $$(Locator locator) {
-        List<WebElement> childElements = DriverClient.getElementsWithin(searchContext.elementId(), locator);
+        List<WebElement> childElements = DriverClient.findElementsWithin(searchContext.elementId(), locator);
         return new WebElementsImpl(childElements, locator);
     }
 

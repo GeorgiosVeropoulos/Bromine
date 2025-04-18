@@ -2,6 +2,7 @@ package elements;
 
 
 import annotations.CanThrow;
+import enums.LocatorType;
 import exceptions.ElementClickInterceptedException;
 import exceptions.NoSuchElementException;
 import exceptions.StaleElementReferenceException;
@@ -106,7 +107,7 @@ public interface WebElement {
 
     /**
      * Will get all child elements of this Web element matching the {@link Locator}
-     * !Important! If you are using a locator of type {@linkplain enums.LocatorType#XPATH}
+     * !Important! If you are using a locator of type {@linkplain LocatorType#XPATH}
      * make sure to add a <b>.</b> infront of the {@code //} otherwise it will search the entire DOM tree.
      * @param locator the locator we want to use for the children
      * @return a List of WebElements or an empty list if no elements can be found.

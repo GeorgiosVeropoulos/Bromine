@@ -26,6 +26,7 @@ public class HttpMethodExecutor {
             return doRequest(HttpMethod.POST, "/session", bodyToSend);
         } catch (IOException e) {
 //            throw new WebDriverException("EXCEPTION IN CREATING SESSION");
+            log.error("START DIDN'T HAPPEN LOOSE YOUR SHIT CABRON");
 //            do nothing for now.
         }
         return new Response("{}");
@@ -59,9 +60,8 @@ public class HttpMethodExecutor {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == 200) {
-                System.out.println("Delete call successfully.");
+                log.debug("Delete call successfully.");
                 connection.getResponseMessage();
-
             } else {
                 System.err.println("Failed to Delete call. Response code: " + responseCode);
             }

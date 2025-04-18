@@ -22,7 +22,7 @@ public abstract class WebElementCollection implements WebElements {
 
     protected void fetchElements() {
         if (!isFetched) {
-            List<WebElement> fetchedElements = DriverClient.getElements(locator);
+            List<WebElement> fetchedElements = DriverClient.findElements(locator);
             elements.clear(); // should be removed?
             elements.addAll(fetchedElements);
             isFetched = true;

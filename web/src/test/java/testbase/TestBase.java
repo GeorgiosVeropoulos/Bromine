@@ -44,6 +44,7 @@ public class TestBase {
         Configuration.network()
                 .setReadTimeout(Duration.ofSeconds(45))
                 .setConnectionTimeout(Duration.ofSeconds(45));
+        ScreenShot.config.setSavePath(Paths.get(System.getProperty("user.dir"), "target", "reports", "reportName"));
     }
 
     @BeforeEach
