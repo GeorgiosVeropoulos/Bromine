@@ -2,11 +2,10 @@ package elements;
 
 import capabilities.BrowserType;
 import capabilities.Configuration;
+import platform.Platform;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static Constants.Constants.OS_LOWERCASE;
 
 public class GeckoDriver extends WebDriver {
 
@@ -80,7 +79,7 @@ public class GeckoDriver extends WebDriver {
         }
         System.out.println("KILL ACTUALLY CALLED CODE");
         try {
-            if (OS_LOWERCASE.contains("win")) {
+            if (Platform.isWindows()) {
                 // If the OS is Windows, use taskkill
                 String killCommand = "taskkill /F /IM " + "chromedriver.exe";
                 executeCommand(killCommand);
