@@ -38,7 +38,6 @@ public class WebElementImpl implements WebElement {
     @Override
     public void sendKeys(String text) {
         String endPoint = buildEndpoint(EndPoints.ELEMENT_SEND_KEYS, searchContext.elementId());
-        System.out.println("Will do request on sessionID: " + DriverClient.sessionId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, new JsonBuilder().addKeyValue("text", text).build());
         HandleExceptions.handleResponse(response, "Send keys issue");
     }
