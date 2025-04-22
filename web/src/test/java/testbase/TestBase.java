@@ -100,7 +100,7 @@ public class TestBase {
                 "--incognito",  // Opens Chrome in incognito mode
                 "--disable-gpu",  // Disables GPU hardware acceleration (useful for headless mode)
                 "--no-sandbox",  // Disables the sandbox (may help with certain CI environments)
-                "--disable-dev-shm-usage",  // Addresses issues with /dev/shm size on certain systems
+                "--disable-dev-shm-usage" // Addresses issues with /dev/shm size on certain systems
         )
                 .addPrefs(prefs)
                 .addExtra("excludeSwitches", new String[]{"enable-automation"}).build();
