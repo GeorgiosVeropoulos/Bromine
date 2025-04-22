@@ -13,7 +13,7 @@ import static Constants.Constants.FIVE_SECONDS;
 
 public class GetURLTest extends TestBase {
 
-    @Test @Tag("parallel")
+    @Test @Tag("parallel") @Tag("test1")
     public void getURLTest() {
 
 //        Sleeper.sleep(FIVE_SECONDS);

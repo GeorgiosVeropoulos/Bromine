@@ -31,7 +31,7 @@ public class SendKeysTest extends TestBase {
 
     }
 
-    @Test @Tag("coverage")
+    @Test @Tag("coverage") @Tag("test1")
     public void sendKeysTest2() {
         WebDriver.get().open("https://www.saucedemo.com/v1/");
         sauceLogin.username.sendKeys("Hello World");

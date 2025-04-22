@@ -3,7 +3,7 @@
 <suite name="Default Suite" parallel="methods">
     <test thread-count="5" name="Bromine">
         <classes>
-            <class name="client.testng.WebElementsParallelTest"/>
+            <class name="client.testng.SendKeysParallelTest"/>
         </classes>
     </test> <!-- Bromine -->
 </suite> <!-- Default Suite -->

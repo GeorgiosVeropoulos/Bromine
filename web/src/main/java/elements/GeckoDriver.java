@@ -6,6 +6,8 @@ import capabilities.Configuration;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static Constants.Constants.OS_LOWERCASE;
+
 public class GeckoDriver extends WebDriver {
 
     protected static final ConcurrentHashMap<Long, String> map = new ConcurrentHashMap<>();
@@ -78,7 +80,7 @@ public class GeckoDriver extends WebDriver {
         }
         System.out.println("KILL ACTUALLY CALLED CODE");
         try {
-            if (os.contains("win")) {
+            if (OS_LOWERCASE.contains("win")) {
                 // If the OS is Windows, use taskkill
                 String killCommand = "taskkill /F /IM " + "chromedriver.exe";
                 executeCommand(killCommand);

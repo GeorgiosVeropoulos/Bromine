@@ -13,8 +13,6 @@ import java.util.Set;
  */
 @ThreadSafe
 public abstract class WebDriver {
-
-    protected static final String os = System.getProperty("os.name").toLowerCase();
     protected static Process process;
 
 

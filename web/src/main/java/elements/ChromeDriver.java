@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static Constants.Constants.OS_LOWERCASE;
+
 @ThreadSafe
 @AffectedBy(clazz = UpdateChromeDriverHelper.class)
 @Slf4j
@@ -88,9 +90,9 @@ public class ChromeDriver extends WebDriver {
             String resourcePath;
 
             String path = Configuration.getDriverPath() != null ? String.valueOf(Configuration.getDriverPath()) : "drivers";
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            if (OS_LOWERCASE.contains("win")) {
                 resourcePath = "/chromedriver.exe";
-            } else if (System.getProperty("os.name").toLowerCase().contains("nix") || System.getProperty("os.name").toLowerCase().contains("nux")) {
+            } else if (OS_LOWERCASE.contains("nix") || OS_LOWERCASE.contains("nux")) {
                 resourcePath = "chromedriver"; // On Linux or macOS, use the plain executable
             } else {
                 throw new UnsupportedOperationException("Unsupported OS for ChromeDriver initialization");
@@ -113,7 +115,7 @@ public class ChromeDriver extends WebDriver {
             String chromedriverPath = p;
 
             // Adjust path for Windows if necessary
-            if (chromedriverPath.startsWith("/") && System.getProperty("os.name").toLowerCase().contains("win")) {
+            if (chromedriverPath.startsWith("/") && OS_LOWERCASE.contains("win")) {
                 chromedriverPath = chromedriverPath.substring(1); // Remove leading slash for Windows
             }
 
