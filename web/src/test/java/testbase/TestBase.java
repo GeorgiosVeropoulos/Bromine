@@ -92,6 +92,7 @@ public class TestBase {
         prefs.put("download.directory_upgrade", true);
         prefs.put("safebrowsing.enabled", true);  // Enable Safe Browsing
         prefs.put("platformName", "LINUX");
+        String tempUserDataDir = System.getProperty("java.io.tmpdir") + "/chrome-user-data-" + System.currentTimeMillis();
         return new ChromeCapabilities().addArguments(
                 "--start-maximized",  // Starts Chrome maximized
                 "--disable-infobars",  // Disables the info bar
@@ -100,7 +101,8 @@ public class TestBase {
                 "--incognito",  // Opens Chrome in incognito mode
                 "--disable-gpu",  // Disables GPU hardware acceleration (useful for headless mode)
                 "--no-sandbox",  // Disables the sandbox (may help with certain CI environments)
-                "--disable-dev-shm-usage"  // Addresses issues with /dev/shm size on certain systems
+                "--disable-dev-shm-usage",  // Addresses issues with /dev/shm size on certain systems
+                "--user-data-dir=" + tempUserDataDir
         )
                 .addPrefs(prefs)
                 .addExtra("excludeSwitches", new String[]{"enable-automation"}).build();

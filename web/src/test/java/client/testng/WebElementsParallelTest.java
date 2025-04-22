@@ -39,7 +39,7 @@ public class WebElementsParallelTest extends TestBaseTestNG {
     public void listTest2() {
         WebDriver.get().open("https://www.georgeveropoulos.com");
         System.out.println(0);
-        System.out.println(elementList.size());
-        elementList.get(3).click();
+        System.out.println(elementList2.size());
+        elementList2.get(3).click();
     }
 }
