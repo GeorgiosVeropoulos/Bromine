@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import sleeper.Sleeper;
+import sleeper.Sleep;
 import testbase.TestBase;
 
 import static Constants.Constants.FIVE_SECONDS;
@@ -19,11 +19,11 @@ public class ElementClickInterceptTest extends TestBase {
 
     WebElement toBeIntercepted = $(Locator.xpath("//div//time"));
 
-    @Test @Tag("parallel") @Tag("coverage")
-    @Disabled
+//    @Test @Tag("parallel") @Tag("coverage")
+//    @Disabled
     public void checkInterceptTest() {
         WebDriver.get().open("https://www.rollingstone.com/tv/tv-reviews/shining-girls-review-elisabeth-moss-1339682/");
-        Sleeper.sleep(FIVE_SECONDS);
+        Sleep.For(FIVE_SECONDS);
         Assertions.assertThrows(ElementClickInterceptedException.class, toBeIntercepted::click);
 
     }

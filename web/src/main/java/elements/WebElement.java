@@ -1,16 +1,11 @@
 package elements;
 
-
-import annotations.CanThrow;
+import org.bromine.annotations.CanThrow;
+import conditions.Condition;
 import enums.LocatorType;
-import exceptions.ElementClickInterceptedException;
-import exceptions.NoSuchElementException;
-import exceptions.StaleElementReferenceException;
-import exceptions.WebDriverException;
-import lombok.SneakyThrows;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.CheckReturnValue;
+import exceptions.*;
+import org.bromine.annotations.CheckForNull;
+import org.slf4j.helpers.CheckReturnValue;
 
 @CanThrow({
         NoSuchElementException.class,
@@ -131,4 +126,16 @@ public interface WebElement {
      * @return true if it is. false if it doesn't or any {@link WebDriverException} happens
      */
     boolean exists();
+
+
+    /**
+     * Will wait for the {@link Condition} to be true.
+     * <p>If the condition is not met a {@link TimeOutException} will be thrown with the cause being the reason this happened if it exists!</p>
+     * @param conditionToBe
+     * @return
+     */
+    @CanThrow({TimeOutException.class})
+    WebElement waitTo(Condition conditionToBe) throws TimeOutException, WebDriverException;
+
+//    WebElement waitToHave(ToHave toHave);
 }

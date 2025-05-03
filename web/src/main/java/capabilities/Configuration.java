@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.nio.file.Path;
+import java.time.Duration;
 
 /**
  * This class handles the entire configuration of the execution.
@@ -26,6 +27,10 @@ public class Configuration {
     @Getter @Setter
     private static Path driverPath;
 
+
+    public static Waiters waiters() {
+        return Waiters.getInstance();
+    }
 
     public static NetworkSettings network() {
         return NetworkSettings.getInstance();

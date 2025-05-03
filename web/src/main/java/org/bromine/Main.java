@@ -1,4 +1,4 @@
-package org.example;
+package org.bromine;
 
 import java.io.IOException;
 

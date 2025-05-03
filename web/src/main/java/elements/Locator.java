@@ -1,10 +1,15 @@
 package elements;
 
 import enums.LocatorType;
+import lombok.Getter;
+import lombok.NonNull;
+
+import java.util.Objects;
 
 /**
  * The location strategy to be used to locate a WebElement or WebElements
  */
+@Getter
 public abstract class Locator {
 
     private final String using;
@@ -17,31 +22,22 @@ public abstract class Locator {
     }
 
 
-    public static Locator id(String id) {
+    public static Locator id(@NonNull String id) {
         return new withID(id);
     }
 
     // Static method to locate elements by XPath
-    public static Locator xpath(String xpath) {
+    public static Locator xpath(@NonNull String xpath) {
         return new withXpath(xpath);
     }
 
     // Static method to locate elements by Name
-    public static Locator name(String name) {
+    public static Locator name(@NonNull String name) {
         return new withName(name);
     }
 
-    public static Locator tagName(String tagName) {
+    public static Locator tagName(@NonNull String tagName) {
         return new withTagName(tagName);
-    }
-
-    // Getters for locatorType and locatorValue
-    public String getUsing() {
-        return using;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override

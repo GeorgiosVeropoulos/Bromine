@@ -5,7 +5,7 @@ import exceptions.NoSuchFrameException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import sleeper.Sleeper;
+import sleeper.Sleep;
 import testbase.TestBase;
 
 import static Constants.Constants.FIVE_SECONDS;
@@ -23,7 +23,7 @@ public class IframesTest extends TestBase {
 
 
 
-    @Test @Tag("coverage")
+    @Test
     public void switchIframeTest() {
         WebDriver.get().open("https://seleniumbase.io/w3schools/iframes");
         Wait wait = new Wait();
@@ -52,7 +52,7 @@ public class IframesTest extends TestBase {
     public void switchToFrameByIndex() {
         WebDriver.get().open("https://seleniumbase.io/w3schools/iframes");
         WebDriver.get().timeouts().set().implicitWait(FIVE_SECONDS);
-        Sleeper.sleep(TWO_SECONDS);
+        Sleep.For(TWO_SECONDS);
         WebDriver.get().switchTo().frame(0);
         Assertions.assertEquals("HTML Iframes (nested iframes)", h2inFirstIframe.getText());
     }

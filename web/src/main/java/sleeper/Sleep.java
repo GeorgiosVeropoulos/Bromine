@@ -3,9 +3,24 @@ package sleeper;
 
 import java.time.Duration;
 
-public interface Sleep {
+public class Sleep {
 
-    Sleep sleep = duration -> Thread.sleep(duration.toMillis());
+    public static void For(Duration duration) {
+        try {
+            Thread.sleep(duration.toMillis());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted Exception would be thrown!");
+        }
+    }
 
-    void sleep(Duration duration) throws InterruptedException;
+    public static void ForSeconds(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted Exception would be thrown!");
+        }
+    }
+
 }

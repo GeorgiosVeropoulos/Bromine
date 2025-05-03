@@ -1,5 +1,6 @@
 package elements;
 
+import conditions.Condition;
 import exceptions.NoSuchElementException;
 import exceptions.WebDriverException;
 
@@ -8,9 +9,7 @@ import java.lang.reflect.Method;
 
 // This class will handle all method invocations dynamically.
 public class WElementInvocationHandler implements InvocationHandler {
-    private Locator locator;  // The locator to find the element
-//    private WebElement realElement; // The actual WElement
-
+    private final Locator locator;  // The locator to find the element
     // this was added to make sure parallel tests work properly in TestNG when multiple Test methods exist under the same Test class.
     private static final ThreadLocal<WebElement> threadLocalElement = new ThreadLocal<>();
 
@@ -33,19 +32,29 @@ public class WElementInvocationHandler implements InvocationHandler {
             return locator;
         }
 
-        if (method.getName().equals("exists") && args == null)  {
+        if (method.getName().equals("exists")  && args == null)  {
             try {
-                System.out.println("was this called?");
                 threadLocalElement.set(fetchElementFromAPI());
             } catch (WebDriverException e) {
                 return Boolean.FALSE;
             }
         }
 
+    //TODO fix this
+        if (method.getName().equals("waitTo") && args != null && args.length == 1 && args[0] instanceof Condition) {
+            // Wait internally without fetching earlier
+            threadLocalElement.set(new WebElementImpl(null, locator).waitTo((Condition) args[0]));
+            return threadLocalElement.get(); // allow method chaining if needed
+        }
+
         if (method.getName().equals("getSearchContext") && args == null)  {
             try {
-                System.out.println("invoke getSearchContext this called?");
-                return DriverClient.findElement(locator);
+                if (threadLocalElement.get() == null) {
+                    threadLocalElement.set(fetchElementFromAPI());
+                    System.out.println("SearchContext was fetched");
+                }
+                System.out.println("getSearchContext was called");
+                return threadLocalElement.get().getSearchContext();
             } catch (WebDriverException e) {
                 return null;
             }

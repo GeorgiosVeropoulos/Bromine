@@ -1,7 +1,10 @@
 package elements;
 
-import javax.annotation.WillClose;
-import javax.annotation.concurrent.ThreadSafe;
+import lombok.NonNull;
+import org.bromine.annotations.CheckForNull;
+import org.bromine.annotations.WillClose;
+import org.bromine.annotations.ThreadSafe;
+
 import java.time.Duration;
 import java.util.Set;
 
@@ -42,10 +45,12 @@ public abstract class WebDriver {
     }
 
 
+    @NonNull
     public WebElement $(Locator locator) {
         return WebElementsFactory.$(locator);
     }
 
+    @NonNull
     public WebElements $$(Locator locator) {
         return WebElementsFactory.$$(locator);
     }
@@ -59,16 +64,17 @@ public abstract class WebDriver {
         DriverClient.openURL(url);
     }
 
+    @CheckForNull
     public String getTitle() {
         return DriverClient.title();
     }
 
-    @WillClose
+    @WillClose(info = "Will close the current window")
     public void close() {
         DriverClient.Contexts.closeWindow();
     }
 
-    @WillClose
+    @WillClose(info = "Will close the browser", clazz = WebDriver.class)
     public void quit() {
         DriverClient.closeSession();
         driver.remove();

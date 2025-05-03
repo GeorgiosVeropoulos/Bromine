@@ -2,6 +2,7 @@ package testbase;
 
 import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
+import capabilities.NetworkSettings;
 import elements.ChromeDriver;
 import elements.WebDriver;
 import org.testng.annotations.AfterMethod;

@@ -3,11 +3,12 @@ package client;
 import elements.*;
 import exceptions.NoSuchElementException;
 import exceptions.TimeOutException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.Page;
-import sleeper.Sleeper;
+import sleeper.Sleep;
 import testbase.TestBase;
 
 import java.time.Duration;
@@ -48,7 +49,7 @@ public class MaximizeWindowTest extends TestBase {
         Wait wait = new Wait(Duration.ofMillis(10_000L), Duration.ofMillis(500))
                 .ignoreExceptions(NoSuchElementException.class, TimeOutException.class);
         boolean isVisible = wait.forResult(ExpectedResult.isVisible(element));
-        System.out.println("isVisible: " + isVisible);
+        Assertions.assertFalse(isVisible);
 //        System.out.println("Title is : " + wait.waitForCondition(ExpectedResult.frameAvailable(element)));
 //        wait.waitForCondition(ExpectedResult.isClickable(element));
 //        long finish = System.currentTimeMillis();
@@ -68,6 +69,6 @@ public class MaximizeWindowTest extends TestBase {
 //        System.out.println(elementList.size());
 //        page.aboutMe.click();
 //        WebDriver.get().window().maximize();
-        Sleeper.sleep(Duration.ofSeconds(1));
+        Sleep.For(Duration.ofSeconds(1));
     }
 }

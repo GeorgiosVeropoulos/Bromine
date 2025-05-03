@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>web</artifactId>
+    <artifactId>automation.web</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
-        <groupId>org.automation.bromine.web</groupId>
+        <groupId>org.bromine</groupId>
         <artifactId>parent</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
@@ -26,8 +26,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.automation.bromine.web</groupId>
+            <groupId>org.bromine</groupId>
             <artifactId>utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bromine</groupId>
+            <artifactId>annotations</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -46,21 +51,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit Platform Surefire Provider (Updated) -->
 
-        <!-- Annotation API (Java 17 Support) -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-
-        <!-- FindBugs (Optional but compatible with Java 17) -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -76,7 +67,7 @@
                     <parallel>methods</parallel>
                     <threadCount>4</threadCount>
                     <useUnlimitedThreads>false</useUnlimitedThreads>
-                    <perCoreThreadCount>true</perCoreThreadCount>
+                    <perCoreThreadCount>false</perCoreThreadCount>
                 </configuration>
             </plugin>
             <plugin>
@@ -120,7 +111,9 @@
                 <version>3.6.3</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
                 </configuration>
                 <executions>
                     <execution>

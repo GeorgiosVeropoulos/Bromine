@@ -1,16 +1,17 @@
 package elements;
 
-import annotations.AffectedBy;
+import org.bromine.annotations.AffectedBy;
 import capabilities.BrowserType;
 import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
 import files.FileLoader;
 import lombok.extern.slf4j.Slf4j;
+import org.bromine.annotations.ThreadSafe;
+import org.bromine.annotations.WillClose;
 import platform.Platform;
-import sleeper.Sleeper;
+import sleeper.Sleep;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
@@ -98,7 +99,7 @@ public class ChromeDriver extends WebDriver {
             // Get the resource URL
             String p = "";
             if (Configuration.getDriverPath() == null) {
-                URL url  = FileLoader.getURLFromPath(path, resourcePath);
+                URL url  = FileLoader.getURLunderTargetClasses(path, resourcePath);
                 p = url.getPath();
             } else {
                 if (!Files.exists(Paths.get(path, resourcePath))) {
@@ -151,7 +152,7 @@ public class ChromeDriver extends WebDriver {
                     }
 
                     // A small sleep to prevent a tight loop, allowing for CPU efficiency
-                    Sleeper.sleep(Duration.ofMillis(100));
+                    Sleep.For(Duration.ofMillis(100));
                 }
 //                Sleeper.sleepInSeconds(5);
             } catch (IOException e) {
@@ -177,6 +178,7 @@ public class ChromeDriver extends WebDriver {
 
 
     @Override
+    @WillClose(clazz = ChromeDriver.class)
     public void quit() {
         super.quit();
         map.remove(Thread.currentThread().getId());

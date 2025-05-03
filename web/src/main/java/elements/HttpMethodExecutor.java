@@ -81,23 +81,9 @@ public class HttpMethodExecutor {
      */
     private static Response doRequest(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException{
 
-        String URL = Configuration.getDriverUrl() + endPoint;
-        log.info("Will do Request on {}", URL);
-        URL url = new URL(URL);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setConnectTimeout(Configuration.network().getConnectionTimeout());
-        connection.setReadTimeout(Configuration.network().getReadTimeout());
-        connection.setRequestMethod(requestMethod.getMethod());
-        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        connection.setDoOutput(true);
+        HttpURLConnection connection = getHttpURLConnection(requestMethod, endPoint, bodyToSend);
 
-        if (bodyToSend != null) {
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = bodyToSend.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-        }
-
+        log.info("Doing request to: {}", Configuration.getDriverUrl() + endPoint);
         int responseCode = connection.getResponseCode();
         log.info("HTTP Response Code: {}", responseCode);
 

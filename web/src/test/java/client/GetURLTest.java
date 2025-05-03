@@ -4,12 +4,7 @@ import elements.WebDriver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import sleeper.Sleeper;
 import testbase.TestBase;
-
-import java.io.IOException;
-
-import static Constants.Constants.FIVE_SECONDS;
 
 public class GetURLTest extends TestBase {
 

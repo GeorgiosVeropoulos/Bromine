@@ -1,5 +1,7 @@
 package elements;
 
+import assertions.Verify;
+import conditions.Condition;
 import json.JsonBuilder;
 import json.JsonParser;
 
@@ -8,10 +10,14 @@ import java.util.List;
 import static Constants.Constants.VALUE;
 import static elements.EndPoints.buildEndpoint;
 
-public class WebElementImpl implements WebElement {
+/**
+ * WebElementImpl is the implementation of the WebElement interface.
+ * It provides methods to interact with web elements in a browser.
+ */
+class WebElementImpl implements WebElement {
 
 
-    private Locator locator;
+    private final Locator locator;
     private SearchContext searchContext;
 
 
@@ -21,8 +27,13 @@ public class WebElementImpl implements WebElement {
 
     }
 
+    private void checkSearchContext() {
+        Verify.nonNull(searchContext, "Search context is null for element: " + locator.toString());
+    }
+
     @Override
     public void click() {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.ELEMENT_CLICK, searchContext.elementId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, "{}");
         HandleExceptions.handleResponse(response, "Element was intercepted using: " + getLocator().getUsing() + " value: " + getLocator().getValue());
@@ -30,6 +41,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public void clear() {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.ELEMENT_CLEAR, searchContext.elementId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, "{}");
         HandleExceptions.handleResponse(response, "Element wasn't able to be cleared!");
@@ -37,6 +49,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public void sendKeys(String text) {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.ELEMENT_SEND_KEYS, searchContext.elementId());
         Response response =  HttpMethodExecutor.doPostRequest(endPoint, new JsonBuilder().addKeyValue("text", text).build());
         HandleExceptions.handleResponse(response, "Send keys issue");
@@ -44,6 +57,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public String getText() {
+        checkSearchContext();
         Response response = HttpMethodExecutor.doGetRequest(EndPoints.buildEndpoint(EndPoints.GET_ELEMENT_TEXT, searchContext.elementId()));
         HandleExceptions.handleResponse(response, "Issue detected trying to fetch getText for WebElement: " + locator.toString());
         return (String) JsonParser.findValueByKey(response, VALUE);
@@ -51,6 +65,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public String getTagName() {
+        checkSearchContext();
         Response response = HttpMethodExecutor.doGetRequest(buildEndpoint(EndPoints.GET_ELEMENT_TAG_NAME, searchContext.elementId()));
         HandleExceptions.handleResponse(response,  "Issue detected trying to fetch getTagName for WebElement: " + locator.toString());
         return (String) JsonParser.findValueByKey(response, VALUE);
@@ -58,6 +73,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public String getAttribute(String attributeName) {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.ELEMENT_ATTRIBUTE, searchContext.elementId(), attributeName);
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "Error when trying to fetch getAttribute for WebElement: " + locator.toString());
@@ -66,6 +82,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public String getProperty(String propertyName) {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.ELEMENT_PROPERTY, searchContext.elementId(), propertyName);
         Object returnValue = HttpMethodExecutor.doGetRequest(endPoint).get(VALUE);
         if (returnValue == null) {
@@ -76,6 +93,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public boolean isDisplayed() {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.IS_ELEMENT_DISPLAYED, searchContext.elementId());
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "");
@@ -84,6 +102,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public boolean isEnabled() {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.IS_ELEMENT_ENABLED, searchContext.elementId());
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "");
@@ -92,6 +111,7 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public boolean isSelected() {
+        checkSearchContext();
         String endPoint = buildEndpoint(EndPoints.IS_ELEMENT_SELECTED, searchContext.elementId());
         Response response = HttpMethodExecutor.doGetRequest(endPoint);
         HandleExceptions.handleResponse(response, "");
@@ -105,12 +125,14 @@ public class WebElementImpl implements WebElement {
 
     @Override
     public WebElement $(Locator locator) {
+        checkSearchContext();
         SearchContext childSearchContext = DriverClient.findElementWithin(searchContext.elementId(), locator);
         return new WebElementImpl(childSearchContext, locator);
     }
 
     @Override
     public WebElements $$(Locator locator) {
+        checkSearchContext();
         List<WebElement> childElements = DriverClient.findElementsWithin(searchContext.elementId(), locator);
         return new WebElementsImpl(childElements, locator);
     }
@@ -126,10 +148,13 @@ public class WebElementImpl implements WebElement {
     }
 
 
+    @Override
+    public WebElement waitTo(Condition conditionToBe) {
+        boolean conditionMet = conditionToBe.apply(this.locator);
+        if (conditionMet) {
+            this.searchContext = ExpectedResult.internalWebElement.get().getSearchContext();
+        }
+        return this;
+    }
 
-
-
-
-//    The element displayed state is typically exposed as an endpoint for GET requests with a URI Template of
-//    /session/{session id}/element/{element id}/displayed.
 }

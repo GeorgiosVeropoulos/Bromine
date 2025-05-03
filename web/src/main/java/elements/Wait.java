@@ -1,16 +1,20 @@
 package elements;
 
+import capabilities.Configuration;
 import exceptions.TimeOutException;
+import exceptions.WebDriverException;
+import lombok.extern.slf4j.Slf4j;
+import org.bromine.annotations.ThreadSafe;
+import org.bromine.annotations.UnderDevelopment;
+import org.slf4j.helpers.CheckReturnValue;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.concurrent.ThreadSafe;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+
 
 /**
  * The Wait class provides a way to explicitly wait for certain conditions to be true or false
@@ -23,15 +27,20 @@ import java.util.function.Supplier;
  * <li>Mofidies the usage of implicit waits to not overlap during its execution.</li>
  *
  * </ul>
+ *
+ * <p>The goal of this class is to limit or eliminate the usage of try catch blocks by its users.
+ * It should be noted that this class is still underdevelopment and could change in the future.</p>
  */
+@Slf4j
 @ThreadSafe
+@UnderDevelopment
 public class Wait {
 
-    private final ArrayList<Class<? extends RuntimeException>> exceptions;
-    protected Duration polling;
-    protected Duration timeout;
+    private final ArrayList<Class<? extends WebDriverException>> exceptions; // List of exceptions to ignore
+    protected Duration polling; // Polling time
+    protected Duration timeout; // Timeout duration
 
-    protected Clock clock;
+    protected Clock clock; // Clock instance to get the current time
 
     public Wait(Duration timeout, Duration polling, Clock clock) {
         this.timeout = timeout;
@@ -44,9 +53,11 @@ public class Wait {
         this(timeout, polling, Clock.systemDefaultZone());
     }
 
+    /**
+     * With default timeout and polling
+     */
     public Wait() {
-        this(WebDriver.get().timeouts().get().implicitWait().isZero() ? Duration.ofSeconds(20) : WebDriver.get().timeouts().get().implicitWait(),
-                Duration.ofMillis(500));
+        this(Configuration.waiters().getTimeout(), Configuration.waiters().getPolling(), Clock.systemDefaultZone());
     }
 
 
@@ -68,13 +79,17 @@ public class Wait {
 
                 try {
                     T result = condition.get();
+                    System.out.println("Condition was called with result: " + result);
                     // Check the condition
+                    if (ExpectedResult.lastException.get() != null)
+                        handleExceptions(ExpectedResult.lastException.get());
                     if (result != null && (Boolean.class != result.getClass() || Boolean.TRUE.equals(result))) {
                         return result;
                     }
 
-                } catch (RuntimeException exception) {
+                } catch (WebDriverException exception) {
                     // Ignore exceptions to retry condition
+                    System.out.println("Was this ever Called?");
                     handleExceptions(exception);
                 }
 
@@ -84,7 +99,7 @@ public class Wait {
                 }
 
                 // Polling delay
-                System.out.println("Waiting " + polling + "ms before re-checking condition");
+                log.info("Waiting " + polling + "ms before re-checking condition");
                 sleep(polling);
             }
         } finally {
@@ -104,12 +119,12 @@ public class Wait {
     }
 
     @SafeVarargs
-    public final Wait ignoreExceptions(Class<? extends RuntimeException>... exceptions) {
+    public final Wait ignoreExceptions(Class<? extends WebDriverException>... exceptions) {
         this.exceptions.addAll(List.of(exceptions));
         return this;
     }
 
-    private void handleExceptions(RuntimeException exception) throws RuntimeException {
+    private void handleExceptions(WebDriverException exception) throws WebDriverException {
         if (exceptions.isEmpty()) {
             throw exception;
         }
@@ -129,14 +144,18 @@ public class Wait {
                     return (T) Boolean.FALSE;
                 }
                 return result;
-            } catch (RuntimeException e) {
+            } catch (WebDriverException e) {
                 // Check if the exception should be ignored
                 handleExceptions(e);
                 return condition.get();
             }
         } else {
-            throw new TimeOutException(String.format(
-                    "Condition wasn't met after a timeout of %s with polling every %s", timeout, polling));
+            TimeOutException exception = new TimeOutException(String.format(
+                    "Condition wasn't met after a timeout of %sms with polling every %sms", timeout.toMillis(), polling.toMillis()));
+            if (ExpectedResult.lastException.get() != null) {
+                exception.initCause(ExpectedResult.lastException.get()); // Set the last Exception as the cause
+            }
+            throw exception;
         }
     }
 

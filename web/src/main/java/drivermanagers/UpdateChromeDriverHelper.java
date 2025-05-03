@@ -1,7 +1,6 @@
 package drivermanagers;
 
 import download.Download;
-import elements.ChromeDriver;
 import files.FileLoader;
 import json.JsonParser;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -34,9 +32,9 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
     static {
         if (Platform.isWindows()) {
-            chromedriverResource = FileLoader.getURLFromPath("drivers", "chromedriver.exe");
+            chromedriverResource = FileLoader.getURLunderTargetClasses("drivers", "chromedriver.exe");
         } else if (Platform.isLinux()) {
-            chromedriverResource = FileLoader.getURLFromPath("drivers", "chromedriver");
+            chromedriverResource = FileLoader.getURLunderTargetClasses("drivers", "chromedriver");
         } else {
             throw new UnsupportedOperationException("Unsupported OS for ChromeDriver");
         }
@@ -54,6 +52,8 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         if (installedChromeVersion.isEmpty() || (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion))) {
             updateChromedriver(version);
             log.info("update chrome Driver");
+        } else {
+            throw new IllegalStateException("Chrome version is up to date please update local chrome version");
         }
         log.info("Exit checkChromeVersionIsUpdated");
     }

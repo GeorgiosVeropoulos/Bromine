@@ -14,4 +14,16 @@ public record SearchContext(String elementName, String elementId) {
             element.values().iterator().next()
         );
     }
+
+    /**
+     * Returns the element name and id as a pretty string.
+     * @return a string representation of the search context.
+     */
+    @Override
+    public String toString() {
+        return "SearchContext{" +
+            "elementName='" + elementName + '\'' +
+            ", elementId='" + elementId + '\'' +
+            '}';
+    }
 }

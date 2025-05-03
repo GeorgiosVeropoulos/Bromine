@@ -1,22 +1,12 @@
 package client.testng;
 
-import elements.ChromeDriver;
-import elements.Locator;
 import elements.WebDriver;
-import elements.WebElement;
-import org.junit.jupiter.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import pages.Page;
 import pages.SauceLogin;
-import sleeper.Sleeper;
+import sleeper.Sleep;
 import testbase.TestBaseTestNG;
-
-import java.time.Duration;
-
-import static elements.WebElementsFactory.$;
-import static elements.WebElementsFactory.$$;
 
 public class SendKeysParallelTest extends TestBaseTestNG {
 
@@ -37,7 +27,7 @@ public class SendKeysParallelTest extends TestBaseTestNG {
 //        Assertions.assertEquals("Hello World", sauceLogin.get().username.getAttribute("value"));
 //        $$(Locator.xpath("//adasdad")).size();
         sauceLogin.username.sendKeys("Hello World");
-        Sleeper.sleepInSeconds(3);
+        Sleep.ForSeconds(3);
         Assert.assertEquals(sauceLogin.username.getAttribute("value"), "Hello World");
 //        WebDriver.get().timeouts().set().implicitWait(Duration.ZERO);
 //        $(Locator.xpath("//asdasd")).click();
@@ -53,7 +43,7 @@ public class SendKeysParallelTest extends TestBaseTestNG {
 //        sauceLogin.get().username.sendKeys("Hello World");
 //        Assertions.assertEquals("Hello World", sauceLogin.get().username.getAttribute("value"));
         sauceLogin.username.sendKeys("Hello World");
-        Sleeper.sleepInSeconds(3);
+        Sleep.ForSeconds(3);
         Assert.assertEquals(sauceLogin.username.getAttribute("value"), "Hello World");
     }
 }

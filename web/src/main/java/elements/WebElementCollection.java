@@ -1,11 +1,12 @@
 package elements;
 
-import javax.annotation.Nonnull;
+import lombok.NonNull;
+
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public abstract class WebElementCollection implements WebElements {
+abstract class WebElementCollection implements WebElements {
     protected List<WebElement> elements = new ArrayList<>();
     protected Locator locator;
     protected boolean isFetched = false; // Track if elements have been fetched
@@ -34,7 +35,7 @@ public abstract class WebElementCollection implements WebElements {
     }
 
     @Override
-    @Nonnull
+    @NonNull
     public Iterator<WebElement> iterator() {
         fetchElements();
         return elements.iterator();

@@ -1,8 +1,6 @@
 package drivermanagers;
 
 
-import ch.qos.logback.classic.spi.PlatformInfo;
-import elements.ChromeDriver;
 import files.FileLoader;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +16,7 @@ public class UpdateDriverHelper {
 
     static {
         try {
-            URL driversUrl = FileLoader.getURLFromPath("drivers/");
+            URL driversUrl = FileLoader.getURLunderTargetClasses("drivers/");
             Path driversPath;
 
             if (driversUrl == null) {

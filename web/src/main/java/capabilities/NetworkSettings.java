@@ -7,16 +7,18 @@ import java.time.Duration;
 
 @Getter
 @PackagePrivate
-public class NetworkSettings {
+public final class NetworkSettings {
 
     private int readTimeout = 60_000;
     private int connectionTimeout = 60_000;
+
+    private NetworkSettings() {}
 
     // Bill Pugh Singleton Implementation
     private static class NetworkSettingsHolder {
         private static final NetworkSettings INSTANCE = new NetworkSettings();
     }
-    public static NetworkSettings getInstance() {
+    static NetworkSettings getInstance() {
         return NetworkSettingsHolder.INSTANCE;
     }
 

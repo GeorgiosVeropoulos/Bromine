@@ -1,5 +1,6 @@
 package client;
 
+import elements.ExpectedResult;
 import elements.Locator;
 import elements.WebElement;
 import elements.WebDriver;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import pages.SauceLogin;
 import testbase.TestBase;
 
-import static elements.WebElementsFactory.$;
 
 public class SendKeysTest extends TestBase {
 

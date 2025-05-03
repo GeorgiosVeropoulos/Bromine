@@ -6,7 +6,8 @@ import exceptions.NoSuchWindowException;
 import json.JsonBuilder;
 import json.JsonParser;
 import lombok.extern.slf4j.Slf4j;
-import sleeper.Sleeper;
+import org.bromine.annotations.ThreadSafe;
+import sleeper.Sleep;
 
 import java.time.Duration;
 import java.util.*;
@@ -19,6 +20,7 @@ import static elements.HttpMethodExecutor.*;
  * Client class that all HTTP request happen.
  */
 @Slf4j
+@ThreadSafe
 abstract class DriverClient {
      // URL where the WebDriver is running
 
@@ -45,7 +47,7 @@ abstract class DriverClient {
         }
         for (int i=0; i < 1; i++) {
             log.info("HAD TO RETRY");
-            Sleeper.sleepInSeconds(2);
+            Sleep.ForSeconds(2);
             response = START(capabilitiesAsString);
             sessionID = (String) JsonParser.findValueByKey(response, "sessionId");
             if (sessionID != null) {

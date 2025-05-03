@@ -2,10 +2,10 @@ package elements;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bromine.annotations.CheckForNull;
+import org.bromine.annotations.ThreadSafe;
+import org.slf4j.helpers.CheckReturnValue;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +15,12 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * ScreenShot is a utility class for taking screenshots of the current browser window or specific web elements.
+ * It provides methods to configure the save path and image format, as well as methods to capture screenshots.
+ */
 @Slf4j
+@ThreadSafe
 public class ScreenShot {
 
     private static Path savePath = Paths.get(System.getProperty("user.dir"), "target", "screenshots");
