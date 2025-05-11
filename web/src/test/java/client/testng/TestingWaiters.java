@@ -1,19 +1,30 @@
 package client.testng;
 
 import capabilities.Configuration;
+import chrome.Chrome;
+import chrome.Downloader;
+import chrome.Install;
+import chrome.Version;
+import chrome.enums.SupportedBinaries;
+import chrome.enums.SupportedChannels;
+import chrome.jsons.DownloadInfo;
+import chrome.jsons.Downloads;
+import chrome.jsons.LastKnownGoodVersionsWithDownloads;
+import chrome.jsons.channels.Channel;
 import conditions.Be;
 import conditions.Have;
 import elements.*;
 import lombok.extern.slf4j.Slf4j;
+import net.GetJson;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pages.Page;
 import sleeper.Sleep;
 import testbase.TestBaseTestNG;
+import zip.ZipHelper;
 
+import java.nio.file.Path;
 import java.time.Duration;
-
-import static elements.WebElementsFactory.$;
 
 @Slf4j
 public class TestingWaiters extends TestBaseTestNG {
@@ -28,15 +39,38 @@ public class TestingWaiters extends TestBaseTestNG {
 
     @Test(groups = "waitToBe")
     public void test1() {
-        WebDriver.get().open("https://www.georgeveropoulos.com");
-        Configuration.waiters().setTimeout(Duration.ofSeconds(5));
-        WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(5));
-//        Assert.assertThrows(TimeOutException.class, () -> {
-//            $(Locator.xpath("//a1231321")).waitToBe(Condition.visible);
-//        });
-        $(Locator.xpath("//a1231321")).waitTo(Be.visible).click();
-        boolean exists = page.info.exists();
-        log.info("Element exists: " + exists);
+        String os = System.getProperty("os.name");
+        String arch = System.getProperty("os.arch");
+        Version details = Chrome.getChromeDetails();
+        LastKnownGoodVersionsWithDownloads lastKnownGoodVersionsWithDownloads = GetJson.getLastKnownGoodVersionsWithDownloadJson();
+        Downloads downloadInfos = lastKnownGoodVersionsWithDownloads.getChannels().getStable().getDownloads();
+//        Channels channels = JsonMapper.of(Channels.class).fromMap(json);
+//        Map<String, Object> stable = (Map<String, Object>) json.get("Stable");
+        String platforms = downloadInfos.getChrome().get(0).getPlatform();
+        DownloadInfo windows = downloadInfos.getChromeInfoByPlatform();
+        Channel stable = lastKnownGoodVersionsWithDownloads.getChannels().getStable();
+        Version detals1 = stable.getVersion();
+        Path path = Downloader.builder().withBinary(SupportedBinaries.CHROMEDRIVER)
+                .withChannel(SupportedChannels.STABLE)
+                .downloadTo(Path.of("target", "test"))
+                .execute();
+//        Path path = Downloader.builder().withBinary(SupportedBinaries.CHROME)
+//                .withChannel(SupportedChannels.STABLE)
+//                .downloadTo(Path.of("target", "test"))
+//                .execute();
+        Install.installChromeDriver(path);
+        log.info("Path: " + path);
+
+        log.info("OS: " + os);
+//        WebDriver.get().open("https://www.georgeveropoulos.com");
+//        Configuration.waiters().setTimeout(Duration.ofSeconds(5));
+//        WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(5));
+////        Assert.assertThrows(TimeOutException.class, () -> {
+////            $(Locator.xpath("//a1231321")).waitToBe(Condition.visible);
+////        });
+//        $(Locator.xpath("//a1231321")).waitTo(Be.visible).click();
+//        boolean exists = page.info.exists();
+//        log.info("Element exists: " + exists);
     }
 
     @Test(groups = "waitToBe")

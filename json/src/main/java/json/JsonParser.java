@@ -1,7 +1,6 @@
 package json;
 
-import elements.HandleExceptions;
-
+import java.math.BigDecimal;
 import java.util.*;
 
 public final class JsonParser {
@@ -117,13 +116,9 @@ public final class JsonParser {
 
     private static Object parseNumber(String value) {
         try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e1) {
-            try {
-                return Double.parseDouble(value);
-            } catch (NumberFormatException e2) {
-                throw new IllegalArgumentException("Invalid number format: " + value);
-            }
+            return new BigDecimal(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number format: " + value);
         }
     }
 

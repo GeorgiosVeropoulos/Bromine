@@ -13,6 +13,8 @@
         <module>../web</module>
         <module>../utils</module>
         <module>../annotations</module>
+        <module>../drivers</module>
+        <module>../json</module>
     </modules>
 
     <properties>
@@ -43,7 +45,7 @@
             <version>1.5.13</version>
         </dependency>
 
-        <!-- Optional: Logback core for extra configurations -->
+        <!-- Optional: Logback json for extra configurations -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>

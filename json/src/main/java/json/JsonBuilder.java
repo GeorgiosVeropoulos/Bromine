@@ -1,18 +1,16 @@
 package json;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-public class JsonObjectBuilder {
-    private final Map<String, Object> jsonMap;
+public class JsonBuilder {
+    private final Map<String, Object> jsonMap ;
 
-    public JsonObjectBuilder() {
+    public JsonBuilder() {
         this.jsonMap = new HashMap<>();
     }
 
-    public JsonObjectBuilder addKeyValue(String key, Object value) {
+    public JsonBuilder addKeyValue(String key, Object value) {
         jsonMap.put(key, value);
         return this;
     }
@@ -29,19 +27,22 @@ public class JsonObjectBuilder {
         return arrayBuilder;
     }
 
+    //Creates the final String JSON that we want to send.
     public String build() {
+        return buildJson(jsonMap);
+    }
+
+    private String buildJson(Map<String, Object> map) {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{");
         boolean first = true;
-        for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (!first) {
                 jsonBuilder.append(", ");
             }
-            jsonBuilder.append("\"").append(entry.getKey()).append("\":");
-            if (entry.getValue() instanceof JsonObjectBuilder) {
-                jsonBuilder.append(((JsonObjectBuilder) entry.getValue()).build());
-            } else if (entry.getValue() instanceof JsonArrayBuilder) {
-                jsonBuilder.append(((JsonArrayBuilder) entry.getValue()).build());
+            jsonBuilder.append("\"").append(entry.getKey()).append("\": ");
+            if (entry.getValue() instanceof Number) {
+                jsonBuilder.append(entry.getValue());
             } else {
                 jsonBuilder.append(valueToJson(entry.getValue()));
             }
@@ -56,16 +57,22 @@ public class JsonObjectBuilder {
         if (value instanceof Integer) {
             return value; // Ensure integers are directly serialized
         } else if (value instanceof String) {
-            return "\"" + value + "\"";
+            return "\"" + escapeString((String) value) + "\"";
         } else if (value instanceof Number || value instanceof Boolean) {
             return value;
         } else if (value instanceof JsonObjectBuilder) {
-            return ((JsonObjectBuilder) value).build(); // Call build() on JsonObjectBuilder
+            return ((JsonObjectBuilder) value).build(); // Call build() on core.JsonObjectBuilder
         } else if (value instanceof JsonArrayBuilder) {
-            return ((JsonArrayBuilder) value).build(); // Call build() on JsonArrayBuilder
+            return ((JsonArrayBuilder) value).build(); // Call build() on core.JsonArrayBuilder
         }
         return "null"; // for null values
     }
 
+    private String escapeString(String input) {
+        return input.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+    }
 }
-

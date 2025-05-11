@@ -1,8 +1,16 @@
 package drivermanagers;
 
+import chrome.Chrome;
+import chrome.Downloader;
+import chrome.Version;
+import chrome.enums.SupportedBinaries;
+import chrome.enums.SupportedChannels;
+import chrome.jsons.DownloadInfo;
+import chrome.jsons.LastKnownGoodVersionsWithDownloads;
 import download.Download;
 import files.FileLoader;
 import json.JsonParser;
+import net.GetJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import platform.Platform;
@@ -27,8 +35,6 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
     private static final URL chromedriverResource;
     private static final Logger log = LoggerFactory.getLogger(UpdateChromeDriverHelper.class);
-    private static final String CHROMEDRIVER_URL = "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/";
-    private static final String LAST_KNOWN_GOOD_VERSIONS_URL = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json";
 
     static {
         if (Platform.isWindows()) {
@@ -42,18 +48,16 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
     public static void checkChromeVersionIsUpdated() {
         log.info("inside checkChromeVersionIsUpdated");
-        String version = fetchLastKnownGoodVersion(LAST_KNOWN_GOOD_VERSIONS_URL, "Stable");
-        log.info("version fetched {}", version);
+        LastKnownGoodVersionsWithDownloads lastKnownGoodVersionsWithDownloads = GetJson.getLastKnownGoodVersionsWithDownloadJson();
+        Version version1 = lastKnownGoodVersionsWithDownloads.getChannels().getStable().getVersion();
+        String version = version1.toString();
         String chromeDriver = getChromedriverVersion();
-        log.info("chromeDriver fetched {}", chromeDriver);
-        String installedChromeVersion = getInstalledChromeVersion();
-
-        log.info("installedChromeVersion fetched {}", installedChromeVersion);
-        if (installedChromeVersion.isEmpty() || (!installedChromeVersion.substring(0,3).equals(chromeDriver) && version.contains(installedChromeVersion))) {
-            updateChromedriver(version);
+        Version installedChromeVersion = Chrome.getChromeDetails(); //        getInstalledChromeVersion();
+        if (installedChromeVersion.toString().isEmpty() || (!installedChromeVersion.getMajor().equals(chromeDriver) && version.contains(installedChromeVersion.getMajor()))) {
+            updateChromedriver();
             log.info("update chrome Driver");
         } else {
-            throw new IllegalStateException("Chrome version is up to date please update local chrome version");
+//            throw new IllegalStateException("Chrome version is up to date please update local chrome version");
         }
         log.info("Exit checkChromeVersionIsUpdated");
     }
@@ -155,45 +159,40 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
     }
 
 
-    private static void updateChromedriver(String chromeVersion) {
+    private static void updateChromedriver() {
         String driverFileName = "";
-        String platformString = "";
-        String zipFileToFind = "";
 
         // Determine the platform and file name based on OS
         if (Platform.isWindows()) {
-            platformString = "win64";
             driverFileName = "chromedriver.exe";
         } else if (Platform.isMac()) {
-            platformString = "mac64";
             driverFileName = "chromedriver";
         } else if (Platform.isLinux()) {
-            platformString = "linux64";
             driverFileName = "chromedriver";
         } else {
             throw new UnsupportedOperationException("Unsupported OS for ChromeDriver update");
         }
 
-        // Form the URL for downloading the specific ChromeDriver version
-        String downloadUrl = CHROMEDRIVER_URL + chromeVersion + "/" + platformString + "/chromedriver-" + platformString + ".zip";
-        log.info("Downloading from: " + downloadUrl);
-        Path zipFilePath = DRIVERS_PACKAGE.resolve("chromedriver.zip");
-
         // Step 1: Download the zip file
-        Download.file(downloadUrl, zipFilePath);
+//        Download.file(downloadUrl, zipFilePath);
+
+        Path download = Downloader.builder().withBinary(SupportedBinaries.CHROMEDRIVER)
+                .withChannel(SupportedChannels.STABLE)
+                .downloadTo(DRIVERS_PACKAGE)
+                .execute();
 
         // Step 2: Unzip and replace the ChromeDriver binary
-        ZipHelper.unzip(zipFilePath, DRIVERS_PACKAGE);
+        ZipHelper.unzip(download, download.getParent());
 
         // Step 3: Set the executable permission for the binary
         setExecutablePermission(DRIVERS_PACKAGE.resolve(driverFileName));
 
         // Step 4: Delete the zip file after unzipping
-        try {
-            Files.deleteIfExists(zipFilePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to delete zip file: " + zipFilePath, e);
-        }
+//        try {
+//            Files.deleteIfExists(zipFilePath);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to delete zip file: " + zipFilePath, e);
+//        }
 
         System.out.println("Chromedriver updated successfully.");
     }

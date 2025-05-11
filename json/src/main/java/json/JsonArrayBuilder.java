@@ -2,7 +2,6 @@ package json;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class JsonArrayBuilder {
     private final List<Object> jsonArray;
@@ -45,9 +44,9 @@ public class JsonArrayBuilder {
         } else if (value instanceof Number || value instanceof Boolean) {
             return value;
         } else if (value instanceof JsonObjectBuilder) {
-            return ((JsonObjectBuilder) value).build(); // Call build() on JsonObjectBuilder
+            return ((JsonObjectBuilder) value).build(); // Call build() on core.JsonObjectBuilder
         } else if (value instanceof JsonArrayBuilder) {
-            return ((JsonArrayBuilder) value).build(); // Call build() on JsonArrayBuilder
+            return ((JsonArrayBuilder) value).build(); // Call build() on core.JsonArrayBuilder
         }
         return "null"; // for null values
     }

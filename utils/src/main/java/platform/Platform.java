@@ -11,6 +11,7 @@ public class Platform {
     }
 
     public enum Architecture {
+        X86,
         X64,
         ARM64,
         UNKNOWN
@@ -29,8 +30,15 @@ public class Platform {
     }
 
     private static Architecture detectArch() {
-        if (OS_ARCH.contains("arm")) return Architecture.ARM64;
-        if (OS_ARCH.contains("64")) return Architecture.X64;
+        if (OS_ARCH.contains("arm") || OS_ARCH.equals("aarch64")) {
+            return Architecture.ARM64;
+        }
+        if (OS_ARCH.equals("x86") || OS_ARCH.equals("i386") || OS_ARCH.equals("i686")) {
+            return Architecture.X86;
+        }
+        if (OS_ARCH.contains("64") || OS_ARCH.equals("amd64") || OS_ARCH.equals("x86_64")) {
+            return Architecture.X64;
+        }
         return Architecture.UNKNOWN;
     }
 
