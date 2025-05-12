@@ -28,6 +28,6 @@ jobs:
           server-id: github
 
       - name: Build & Deploy with Maven
-        run: mvn -B flatten deploy -DskipTests -Drevision=0.0.1-SNAPSHOT -f ./parent/pom.xml -s ./settings.xml
+        run: mvn -B flatten:flatten deploy -DskipTests -Drevision=0.0.1-SNAPSHOT -f ./parent/pom.xml -s ./settings.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token automatically handled by GitHub Actions
