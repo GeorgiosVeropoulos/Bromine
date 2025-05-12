@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * may be null, and should be checked for nullability before use.
  */
 @Documented
-@Target( { ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckForNull {
 

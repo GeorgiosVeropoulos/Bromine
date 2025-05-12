@@ -1,4 +1,4 @@
-package zip;
+package org.bromine.utils.zip;
 
 import lombok.extern.slf4j.Slf4j;
 

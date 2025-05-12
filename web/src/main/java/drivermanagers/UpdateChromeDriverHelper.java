@@ -5,16 +5,13 @@ import chrome.Downloader;
 import chrome.Version;
 import chrome.enums.SupportedBinaries;
 import chrome.enums.SupportedChannels;
-import chrome.jsons.DownloadInfo;
 import chrome.jsons.LastKnownGoodVersionsWithDownloads;
-import download.Download;
-import files.FileLoader;
-import json.JsonParser;
+import org.bromine.utils.files.FileLoader;
 import net.GetJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import platform.Platform;
-import zip.ZipHelper;
+import org.bromine.utils.platform.Platform;
+import org.bromine.utils.zip.ZipHelper;
 
 import java.io.*;
 import java.net.*;
@@ -22,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -64,46 +60,6 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
 
 
 
-    private static String fetchLastKnownGoodVersion(String urlString, String build) {
-        URL url;
-        try {
-            url = new URL(urlString);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        HttpURLConnection connection = null;
-        try {
-            connection = (HttpURLConnection) url.openConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            connection.setRequestMethod("GET");
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        }
-
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream()))) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (response.toString().isEmpty() || response.toString().isBlank()) {
-            throw new RuntimeException("No Version FOUND");
-        }
-        Map<String, Object> parsedJson = JsonParser.parse(response.toString());
-        Map<String, Object> channels = (Map<String, Object>) parsedJson.get("channels");
-        Map<String, Object> buildJson = (Map<String, Object>) channels.get(build);
-        return buildJson.get("version").toString();
-    }
-
     private static String getChromedriverVersion() {
         // Command to get Chromedriver version
         Process process;
@@ -121,43 +77,6 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         }
         throw new IllegalStateException("Unable to determine installed Chromedriver version.");
     }
-
-
-    private static String getInstalledChromeVersion() {
-        Process process = null;
-        String version = null;
-
-        process = getChromeProcess();
-
-        Scanner scanner = new Scanner(process.getInputStream());
-        while (scanner.hasNext()) {
-            String line = scanner.nextLine().trim(); // Trim leading/trailing whitespace
-            if (Platform.isWindows() && line.startsWith("version")) {
-                // Windows: Extract the version from the line
-                String[] parts = line.split("\\s+"); // Split by whitespace
-                if (parts.length >= 3) { // Ensure the line has enough parts
-                    version = parts[2].split("\\.")[0]; // Extract the major version
-                    break; // Exit the loop once the version is found
-                }
-            } else if (!Platform.isWindows() && line.toLowerCase().contains("chrome")) {
-                // Linux/macOS: Extract the version from the command output
-                version = line.replaceAll("[^\\d.]", "").trim(); // Remove non-numeric characters
-                String[] parts = version.split("\\.");
-                if (parts.length >= 3) {
-                    version = parts[0] + "." + parts[1] + "." + parts[2];
-                }
-                break; // Exit the loop once the version is found
-            }
-        }
-        scanner.close(); // Close the scanner to release resources
-
-        if (version == null) {
-            throw new IllegalStateException("Unable to determine installed Chrome version.");
-        }
-
-        return version;
-    }
-
 
     private static void updateChromedriver() {
         String driverFileName = "";
@@ -216,22 +135,5 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         } catch (IOException e) {
             throw new RuntimeException("Failed to set executable permission for " + filePath, e);
         }
-    }
-
-    protected static Process getChromeProcess() {
-        Process process;
-        try {
-            process = switch (Platform.getOperatingSystem()) {
-                case WINDOWS -> Runtime.getRuntime().exec(new String[]{
-                        "cmd.exe", "/c", "reg", "query", "HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon", "/v", "version"});
-                case LINUX -> Runtime.getRuntime().exec("/opt/google/chrome/google-chrome --version");
-                case MAC -> Runtime.getRuntime().exec("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version");
-                case NOT_SUPPORTED -> throw new UnsupportedOperationException("NOT SUPPORTED OS!");
-            };
-
-        } catch (IOException platformException) {
-            throw new RuntimeException(platformException.getCause());
-        }
-        return process;
     }
 }

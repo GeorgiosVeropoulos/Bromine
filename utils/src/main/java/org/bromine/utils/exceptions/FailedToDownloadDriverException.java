@@ -1,4 +1,4 @@
-package exceptions;
+package org.bromine.utils.exceptions;
 
 public class FailedToDownloadDriverException extends RuntimeException{
 

@@ -6,6 +6,7 @@ import exceptions.NoSuchWindowException;
 import json.JsonBuilder;
 import json.JsonParser;
 import lombok.extern.slf4j.Slf4j;
+import org.bromine.utils.net.Response;
 import org.bromine.annotations.ThreadSafe;
 import sleeper.Sleep;
 
@@ -95,7 +96,7 @@ abstract class DriverClient {
         String jsonToSend =  new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build();
         Response response = doPostRequest(EndPoints.FIND_ELEMENT , jsonToSend);
         HandleExceptions.handleResponse(response, "Element Not found using: " + locator.toString());
-        return new SearchContext(response.getValueAsMap());
+        return new SearchContext(response.getMapFor("value"));
     }
 
 
@@ -115,7 +116,7 @@ abstract class DriverClient {
         String endPoint = buildEndpoint(EndPoints.FIND_ELEMENT_FROM_ELEMENT, parentId);
         Response response = doPostRequest(endPoint, new JsonBuilder().addKeyValue("using", locator.getUsing()).addKeyValue("value", locator.getValue()).build());
         HandleExceptions.handleResponse(response, "Could not find element: " + locator.toString());
-        return new SearchContext(response.getValueAsMap());
+        return new SearchContext(response.getMapFor("value"));
     }
 
     // Retrieves multiple child elements within a parent element's context
@@ -249,7 +250,7 @@ abstract class DriverClient {
         }
 
         protected static void newWindow() {
-            String handle = doPostRequest(EndPoints.NEW_WINDOW, new JsonBuilder().addKeyValue("type", "window").build()).getValueAsMap().get("handle");
+            String handle = doPostRequest(EndPoints.NEW_WINDOW, new JsonBuilder().addKeyValue("type", "window").build()).getMapFor("value").get("handle");
             switchToWindow(handle);
         }
 

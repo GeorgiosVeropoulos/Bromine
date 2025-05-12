@@ -1,4 +1,4 @@
-package platform;
+package org.bromine.utils.platform;
 
 public class Platform {
 

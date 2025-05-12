@@ -1,6 +1,6 @@
-package download;
+package org.bromine.utils.download;
 
-import exceptions.FailedToDownloadDriverException;
+import org.bromine.utils.exceptions.FailedToDownloadDriverException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

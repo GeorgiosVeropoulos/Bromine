@@ -5,11 +5,11 @@ import capabilities.BrowserType;
 import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
 import drivermanagers.UpdateChromeDriverHelper;
-import files.FileLoader;
+import org.bromine.utils.files.FileLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.bromine.annotations.ThreadSafe;
 import org.bromine.annotations.WillClose;
-import platform.Platform;
+import org.bromine.utils.platform.Platform;
 import sleeper.Sleep;
 
 import java.io.*;

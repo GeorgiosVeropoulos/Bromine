@@ -1,4 +1,4 @@
-package files;
+package org.bromine.utils.files;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -22,7 +22,6 @@ public class FileLoader {
         } catch (MalformedURLException e) {
             url = null;
         }
-
         return url;
     }
 }

@@ -1,6 +1,6 @@
 package chrome;
 
-import platform.Platform;
+import org.bromine.utils.platform.Platform;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -22,7 +22,7 @@ public class Chrome {
             };
 
         } catch (IOException platformException) {
-            throw new RuntimeException(platformException.getCause());
+            throw new RuntimeException("Chrome Prosses wasn't able to be found", platformException.getCause());
         }
         return process;
     }

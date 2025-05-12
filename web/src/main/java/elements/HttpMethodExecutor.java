@@ -1,17 +1,16 @@
 package elements;
 
 import capabilities.Configuration;
-import enums.HttpMethod;
 import json.JsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.bromine.utils.net.HttpMethod;
+import org.bromine.utils.net.HttpResponseHandler;
+import org.bromine.utils.net.HttpUtil;
+import org.bromine.utils.net.Response;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 /**
  * !!!UNDER CONSTRUCTION!!!
@@ -79,53 +78,13 @@ public class HttpMethodExecutor {
      * @return a {@link Response} with the acquired data in a form of a {@code Map<String, Object}
      * @throws IOException for any exception happening.
      */
-    private static Response doRequest(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException{
-
-        HttpURLConnection connection = getHttpURLConnection(requestMethod, endPoint, bodyToSend);
-
-        log.info("Doing request to: {}", Configuration.getDriverUrl() + endPoint);
-        int responseCode = connection.getResponseCode();
-        log.info("HTTP Response Code: {}", responseCode);
-
-        if (responseCode >= 200 && responseCode < 300) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-                log.info("Response Body: {}", response.toString());
-                return new Response(response.toString());
-            }
-        } else {
-            // Error response: read from ErrorStream
-            log.error("Error during session creation: HTTP Response Code {}", responseCode);
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
-                StringBuilder errorResponse = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    errorResponse.append(responseLine.trim());
-                }
-                log.error("Error Response Body: {}", errorResponse.toString());
-                return new Response(errorResponse.toString());
-            }
-        }
-    }
-
-    private static HttpURLConnection getHttpURLConnection(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException {
-        URL url = new URL(Configuration.getDriverUrl()  + endPoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(requestMethod.getMethod());
-        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        connection.setDoOutput(true);
-
-        if (bodyToSend != null) {
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = bodyToSend.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-        }
-        return connection;
+    private static Response doRequest(HttpMethod requestMethod, String endPoint, String bodyToSend) throws IOException {
+        HttpURLConnection connection = HttpUtil.with(requestMethod)
+                .forUrl(Configuration.getDriverUrl()  + endPoint)
+                .withBody(bodyToSend)
+                .withProperty("Content-Type", "application/json; charset=UTF-8")
+                .getConnection();
+        return HttpResponseHandler.handleResponse(connection);
     }
 
 }

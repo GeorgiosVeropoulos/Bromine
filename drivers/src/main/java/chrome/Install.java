@@ -1,6 +1,6 @@
 package chrome;
 
-import zip.ZipHelper;
+import org.bromine.utils.zip.ZipHelper;
 
 import java.nio.file.Path;
 

@@ -4,6 +4,7 @@ import assertions.Verify;
 import conditions.Condition;
 import json.JsonBuilder;
 import json.JsonParser;
+import org.bromine.utils.net.Response;
 
 import java.util.List;
 

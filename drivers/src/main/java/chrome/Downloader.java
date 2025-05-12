@@ -8,11 +8,20 @@ import chrome.jsons.channels.Channel;
 import chrome.jsons.channels.Channels;
 import net.GetJson;
 import net.HttpHelper;
+import org.bromine.annotations.UnderDevelopment;
 
 import java.nio.file.Path;
 
 import static chrome.ChromeSupport.getCurrentPlatform;
 
+/**
+ * Downloads the specified binary for the specified channel.
+ * <p>
+ * This class is used to download Chrome, Chromedriver, or Chrome Headless Shell binaries.
+ * It uses the Last Known Good Versions with Downloads JSON file to get the download URL.
+ * More endpoints will be added in the future.
+ */
+@UnderDevelopment
 public class Downloader {
 
     private final SupportedBinaries binary;

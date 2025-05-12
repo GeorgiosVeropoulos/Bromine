@@ -2,7 +2,7 @@ package elements;
 
 import capabilities.BrowserType;
 import capabilities.Configuration;
-import platform.Platform;
+import org.bromine.utils.platform.Platform;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;

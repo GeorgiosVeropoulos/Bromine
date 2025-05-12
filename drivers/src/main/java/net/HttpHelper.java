@@ -1,15 +1,20 @@
 package net;
 
+import lombok.extern.slf4j.Slf4j;
+import org.bromine.utils.net.HttpMethod;
+import org.bromine.utils.net.HttpUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+
+@Slf4j
 public class HttpHelper {
 
 
@@ -19,12 +24,10 @@ public class HttpHelper {
         StringBuilder response = new StringBuilder();
 
         try {
-            URL url = new URL(urlToGoTo);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("User-Agent", "Java Chrome Fetcher");
-
+            HttpURLConnection connection = HttpUtil.with(HttpMethod.GET)
+                    .forUrl(urlToGoTo)
+                    .withProperty("User-Agent", "Java Chrome Fetcher")
+                    .getConnection();
             int status = connection.getResponseCode();
 
             if (status != HttpURLConnection.HTTP_OK) {
@@ -42,7 +45,7 @@ public class HttpHelper {
             connection.disconnect();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to fetch JSON from {}", urlToGoTo);
             throw new RuntimeException("Failed to fetch JSON", e);
         }
 
@@ -51,16 +54,10 @@ public class HttpHelper {
 
     public static void downloadTo(String urlToGoTo, Path destination) {
         try {
-            URL url = new URL(urlToGoTo);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("User-Agent", "Java Chrome Fetcher");
-
-            int status = connection.getResponseCode();
-            if (status != HttpURLConnection.HTTP_OK) {
-                throw new IOException("HTTP error code: " + status);
-            }
-
+            HttpURLConnection connection = HttpUtil.with(HttpMethod.GET)
+                    .forUrl(urlToGoTo)
+                    .withProperty("User-Agent", "Java Chrome Fetcher")
+                    .getConnection();
             // Create directories if not exist
             Files.createDirectories(destination.getParent());
 
@@ -71,7 +68,7 @@ public class HttpHelper {
 
             connection.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to download file from {}", urlToGoTo);
             throw new RuntimeException("Failed to download file", e);
         }
     }

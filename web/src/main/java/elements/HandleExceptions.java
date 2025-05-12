@@ -2,6 +2,7 @@ package elements;
 
 import exceptions.*;
 import json.JsonParser;
+import org.bromine.utils.net.Response;
 
 import java.util.Map;
 import java.util.regex.Matcher;

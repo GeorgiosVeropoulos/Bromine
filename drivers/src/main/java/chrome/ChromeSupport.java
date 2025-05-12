@@ -1,9 +1,7 @@
 package chrome;
 
 import chrome.enums.SupportedPlatforms;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import platform.Platform;
+import org.bromine.utils.platform.Platform;
 
 
 /**

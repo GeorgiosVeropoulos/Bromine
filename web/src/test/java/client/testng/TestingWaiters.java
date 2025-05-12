@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
 import pages.Page;
 import sleeper.Sleep;
 import testbase.TestBaseTestNG;
-import zip.ZipHelper;
 
 import java.nio.file.Path;
 import java.time.Duration;
@@ -54,6 +53,7 @@ public class TestingWaiters extends TestBaseTestNG {
                 .withChannel(SupportedChannels.STABLE)
                 .downloadTo(Path.of("target", "test"))
                 .execute();
+        WebDriver.get().open("https://www.georgeveropoulos.com");
 //        Path path = Downloader.builder().withBinary(SupportedBinaries.CHROME)
 //                .withChannel(SupportedChannels.STABLE)
 //                .downloadTo(Path.of("target", "test"))

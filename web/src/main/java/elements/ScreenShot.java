@@ -2,6 +2,7 @@ package elements;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bromine.utils.net.Response;
 import org.bromine.annotations.CheckForNull;
 import org.bromine.annotations.ThreadSafe;
 import org.slf4j.helpers.CheckReturnValue;
