@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-
+    if: contains(github.event.pull_request.title, '[test]')  # Check if PR title contains [b]
     runs-on: ubuntu-latest
 
     steps:
