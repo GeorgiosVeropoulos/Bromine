@@ -27,7 +27,7 @@ jobs:
           distribution: temurin
           java-version: '17'
           server-id: github
-          settings-path: ./settings.xml  # Path to the manually created settings.xml
+          # settings-path: ./settings.xml  # Path to the manually created settings.xml
 
       - name: Build & Deploy with Maven
         run: mvn -B deploy -Drevision=0.0.1-SNAPSHOT -s ./settings.xml
