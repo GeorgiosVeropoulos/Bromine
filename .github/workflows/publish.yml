@@ -1,10 +1,9 @@
 name: Deploy Maven Modules
 
 on:
-  push:
+  create:
     branches:
-      - main
-      - release/**  # Trigger deploy on releases or main branch
+      - 'release-*'  # Match any branch that starts with "release-"
     paths:
       - '**.java'
       - '**/pom.xml'
