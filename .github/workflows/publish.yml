@@ -10,7 +10,6 @@ on:
 
 jobs:
   deploy:
-    # if: contains(github.event.head_commit.message, '[deploy]')
     runs-on: ubuntu-latest
 
     permissions:
@@ -27,9 +26,8 @@ jobs:
           distribution: temurin
           java-version: '17'
           server-id: github
-          # settings-path: ./settings.xml  # Path to the manually created settings.xml
 
       - name: Build & Deploy with Maven
-        run: mvn -B deploy -Drevision=0.0.1-SNAPSHOT -s ./settings.xml
+        run: mvn -B deploy -Drevision=0.0.1-SNAPSHOT -f ./parent/pom.xml -s ./settings.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token automatically handled by GitHub Actions
