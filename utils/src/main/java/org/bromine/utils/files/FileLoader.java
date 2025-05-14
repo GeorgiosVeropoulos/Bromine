@@ -24,4 +24,20 @@ public class FileLoader {
         }
         return url;
     }
+
+    public static String getPathUnderTargetClasses(String... path) {
+        try {
+            // Build the full path to the file
+            File file = Paths.get("target/classes", path).toFile();
+            if (!file.exists()) {
+                return null;
+            }
+
+            // Convert to canonical absolute path (platform safe, handles spaces, symlinks, etc.)
+            return file.getCanonicalPath();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
