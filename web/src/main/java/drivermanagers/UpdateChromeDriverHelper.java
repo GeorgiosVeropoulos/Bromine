@@ -46,35 +46,39 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         log.info("inside checkChromeVersionIsUpdated");
         LastKnownGoodVersionsWithDownloads lastKnownGoodVersionsWithDownloads = GetJson.getLastKnownGoodVersionsWithDownloadJson();
         Version version1 = lastKnownGoodVersionsWithDownloads.getChannels().getStable().getVersion();
-        String version = version1.toString();
-        String chromeDriver = getChromedriverVersion();
+        Version chromeDriver = getChromedriverVersion();
         Version installedChromeVersion = Chrome.getChromeDetails(); //        getInstalledChromeVersion();
-        if (installedChromeVersion.toString().isEmpty() || (!installedChromeVersion.getMajor().equals(chromeDriver) && version.contains(installedChromeVersion.getMajor()))) {
+        if (installedChromeVersion.toString().isEmpty() || (!installedChromeVersion.getMajor().equals(chromeDriver.getMajor()) && version1.getMajor().equals(installedChromeVersion.getMajor()))) {
             updateChromedriver();
             log.info("update chrome Driver");
-        } else {
-//            throw new IllegalStateException("Chrome version is up to date please update local chrome version");
         }
         log.info("Exit checkChromeVersionIsUpdated");
     }
 
 
 
-    private static String getChromedriverVersion() {
-        // Command to get Chromedriver version
+    private static Version getChromedriverVersion() {
         Process process;
         try {
             if (chromedriverResource == null) {
-                return "0";
+                return new Version("0.0.0.0");
             }
-            process = Runtime.getRuntime().exec(new File(chromedriverResource.toURI()).getAbsolutePath() + " --version");
+            process = Runtime.getRuntime().exec(
+                    new File(chromedriverResource.toURI()).getAbsolutePath() + " --version"
+            );
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        Scanner scanner = new Scanner(process.getInputStream());
-        if (scanner.hasNextLine()) {
-            return scanner.nextLine().split(" ")[1].split("\\.")[0]; // Get major version
+
+        try (Scanner scanner = new Scanner(process.getInputStream())) {
+            if (scanner.hasNextLine()) {
+                // Example output: "ChromeDriver 139.0.7258.66 (commit-hash...)"
+                String line = scanner.nextLine();
+                String versionString = line.split(" ")[1]; // -> "139.0.7258.66"
+                return new Version(versionString);
+            }
         }
+
         throw new IllegalStateException("Unable to determine installed Chromedriver version.");
     }
 
@@ -95,7 +99,8 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
         // Step 1: Download the zip file
 //        Download.file(downloadUrl, zipFilePath);
 
-        Path download = Downloader.builder().withBinary(SupportedBinaries.CHROMEDRIVER)
+        Path download = Downloader.builderFor().lastKnownGoodVersions()
+                .withBinary(SupportedBinaries.CHROMEDRIVER)
                 .withChannel(SupportedChannels.STABLE)
                 .downloadTo(DRIVERS_PACKAGE)
                 .execute();

@@ -78,7 +78,7 @@ public class ExpectedResult {
     public static Supplier<Boolean> isInvisible(WebElement element) {
         return () -> {
             try {
-                return !element.isDisplayed();
+                return !isVisible(element).get();
             } catch (WebDriverException e) {
                 lastException.set(e);
                 return true;

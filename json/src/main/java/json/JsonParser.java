@@ -5,7 +5,7 @@ import java.util.*;
 
 public final class JsonParser {
 
-    public static Map<String, Object> parse(String jsonString) {
+    public static LinkedHashMap<String, Object> parse(String jsonString) {
         jsonString = jsonString.trim();
         if (jsonString.startsWith("{")) {
             return parseObject(jsonString);
@@ -15,8 +15,8 @@ public final class JsonParser {
         throw new IllegalArgumentException("Invalid JSON string.");
     }
 
-    private static Map<String, Object> parseObject(String jsonString) {
-        Map<String, Object> map = new HashMap<>();
+    private static LinkedHashMap<String, Object> parseObject(String jsonString) {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         jsonString = jsonString.substring(1, jsonString.length() - 1).trim(); // Remove outer braces
         String[] keyValuePairs = splitJson(jsonString);
 

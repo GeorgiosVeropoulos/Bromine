@@ -23,4 +23,8 @@ public class Sleep {
         }
     }
 
+    public static void with(Duration duration) {
+        For(duration);
+    }
+
 }

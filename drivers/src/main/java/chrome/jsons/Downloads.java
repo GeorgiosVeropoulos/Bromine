@@ -16,6 +16,9 @@ public class Downloads {
     List<DownloadInfo> headlessShell;
 
     private DownloadInfo getInfoByPlatform(List<DownloadInfo> list, String platform) {
+        if (list == null) {
+            return null;
+        }
         for (DownloadInfo info : list) {
             if (info.getPlatform().equalsIgnoreCase(platform)) {
                 return info;

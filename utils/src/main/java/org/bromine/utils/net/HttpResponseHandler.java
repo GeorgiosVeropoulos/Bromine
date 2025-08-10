@@ -20,9 +20,7 @@ public class HttpResponseHandler {
 
         String responseBody = readStream(stream);
 
-        if (responseCode >= 200 && responseCode < 300) {
-            log.info("Response Body: {}", responseBody);
-        } else {
+        if (!(responseCode >= 200 && responseCode < 300)) {
             log.error("HTTP {} Error: {}", responseCode, responseBody);
         }
 

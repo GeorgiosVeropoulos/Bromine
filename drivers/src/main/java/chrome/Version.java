@@ -7,12 +7,15 @@ import lombok.Getter;
 /**
  * Represents a version of Chrome in the format major.minor.build.patch
  */
-@Getter
 public class Version {
 
+    @Getter
     private final String major;
+    @Getter
     private final String minor;
+    @Getter
     private final String build;
+    @Getter
     private final String patch;
 
     private final String completeString;
@@ -31,6 +34,7 @@ public class Version {
         }
     }
 
+    @Override
     public String toString() {
         return completeString;
     }

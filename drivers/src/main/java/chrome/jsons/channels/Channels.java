@@ -8,7 +8,6 @@ public class Channels {
 
     private Stable Stable;
     private Beta Beta;
-
     private Dev Dev;
     private Canary Canary;
 

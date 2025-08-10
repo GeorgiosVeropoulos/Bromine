@@ -1,12 +1,10 @@
 package client.testng;
 
 import capabilities.Configuration;
-import chrome.Chrome;
-import chrome.Downloader;
-import chrome.Install;
-import chrome.Version;
+import chrome.*;
 import chrome.enums.SupportedBinaries;
 import chrome.enums.SupportedChannels;
+import chrome.enums.SupportedEndPoints;
 import chrome.jsons.DownloadInfo;
 import chrome.jsons.Downloads;
 import chrome.jsons.LastKnownGoodVersionsWithDownloads;
@@ -22,8 +20,11 @@ import pages.Page;
 import sleeper.Sleep;
 import testbase.TestBaseTestNG;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+
+import static elements.WebElementsFactory.$$;
 
 @Slf4j
 public class TestingWaiters extends TestBaseTestNG {
@@ -37,7 +38,7 @@ public class TestingWaiters extends TestBaseTestNG {
 
 
     @Test(groups = "waitToBe")
-    public void test1() {
+    public void test1() throws IOException {
         String os = System.getProperty("os.name");
         String arch = System.getProperty("os.arch");
         Version details = Chrome.getChromeDetails();
@@ -49,7 +50,8 @@ public class TestingWaiters extends TestBaseTestNG {
         DownloadInfo windows = downloadInfos.getChromeInfoByPlatform();
         Channel stable = lastKnownGoodVersionsWithDownloads.getChannels().getStable();
         Version detals1 = stable.getVersion();
-        Path path = Downloader.builder().withBinary(SupportedBinaries.CHROMEDRIVER)
+        Path path = Downloader.builderFor().lastKnownGoodVersions()
+                .withBinary(SupportedBinaries.CHROMEDRIVER)
                 .withChannel(SupportedChannels.STABLE)
                 .downloadTo(Path.of("target", "test"))
                 .execute();
@@ -59,6 +61,7 @@ public class TestingWaiters extends TestBaseTestNG {
 //                .downloadTo(Path.of("target", "test"))
 //                .execute();
         Install.installChromeDriver(path);
+//        Files.deleteIfExists(Path.of("target", "test", "chromedriver-win64.zip"));
         log.info("Path: " + path);
 
         log.info("OS: " + os);
@@ -90,5 +93,29 @@ public class TestingWaiters extends TestBaseTestNG {
 //        System.out.println("Element exists: " + exists);
 //        boolean exists = $(Locator.xpath("//a1231321")).exists();
 //        System.out.println("Element exists: " + exists);
+    }
+
+    @Test
+    public void testEndPointsChromeDownloader() {
+
+       Path path1 = Downloader.builderFor()
+               .latestVersionsPerMilestoneWithDownloads()
+               .withBinary(SupportedBinaries.CHROMEDRIVER)
+//               .withMilestone("114")
+               .withMilestone("134")
+               .execute();
+
+    }
+
+    @Test
+    public void getLatestPathVersionsPerBuildWithDownloadsJson() {
+
+        Path path1 = Downloader.builderFor()
+                .latestVersionsPerMilestoneWithDownloads()
+                .withBinary(SupportedBinaries.CHROMEDRIVER)
+//               .withMilestone("114")
+                .withMilestone("134")
+                .execute();
+
     }
 }

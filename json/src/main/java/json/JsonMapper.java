@@ -18,7 +18,7 @@ public class JsonMapper<T> {
         return new JsonMapper<>(clazz);
     }
 
-    public T fromMap(Map<String, Object> jsonMap) {
+    public T fromMap(LinkedHashMap<String, Object> jsonMap) {
         try {
             T instance = type.getDeclaredConstructor().newInstance();
 
@@ -60,14 +60,14 @@ public class JsonMapper<T> {
                             List<Object> typedList = new ArrayList<>();
                             for (Object item : (List<?>) rawVal) {
                                 if (item instanceof Map) {
-                                    typedList.add(JsonMapper.of(listElementType).fromMap((Map<String, Object>) item));
+                                    typedList.add(JsonMapper.of(listElementType).fromMap((LinkedHashMap<String, Object>) item));
                                 } else {
                                     typedList.add(item);
                                 }
                             }
                             resultMap.put(mapKey, typedList);
                         } else if (rawVal instanceof Map && valueType instanceof Class) {
-                            resultMap.put(mapKey, JsonMapper.of((Class<?>) valueType).fromMap((Map<String, Object>) rawVal));
+                            resultMap.put(mapKey, JsonMapper.of((Class<?>) valueType).fromMap((LinkedHashMap<String, Object>) rawVal));
                         } else {
                             resultMap.put(mapKey, rawVal);
                         }
@@ -82,7 +82,7 @@ public class JsonMapper<T> {
                     List<Object> typedList = new ArrayList<>();
                     for (Object item : (List<?>) value) {
                         if (item instanceof Map) {
-                            typedList.add(JsonMapper.of(elementType).fromMap((Map<String, Object>) item));
+                            typedList.add(JsonMapper.of(elementType).fromMap((LinkedHashMap<String, Object>) item));
                         } else {
                             typedList.add(item);
                         }
@@ -90,7 +90,7 @@ public class JsonMapper<T> {
                     field.set(instance, typedList);
 
                 } else if (value instanceof Map && !isPrimitiveOrWrapper(fieldType)) {
-                    field.set(instance, JsonMapper.of(fieldType).fromMap((Map<String, Object>) value));
+                    field.set(instance, JsonMapper.of(fieldType).fromMap((LinkedHashMap<String, Object>) value));
                 } else {
                     field.set(instance, value);
                 }
