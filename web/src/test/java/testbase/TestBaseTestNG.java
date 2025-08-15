@@ -2,9 +2,12 @@ package testbase;
 
 import capabilities.ChromeCapabilities;
 import capabilities.Configuration;
+import capabilities.FireFoxCapabilities;
 import capabilities.NetworkSettings;
 import elements.ChromeDriver;
+import elements.GeckoDriver;
 import elements.WebDriver;
+import firefox.FireFox;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -39,6 +42,8 @@ public class TestBaseTestNG {
     @BeforeMethod(alwaysRun = true)
     public void beforeEachTestRun() {
         new ChromeDriver(chromeCapabilities());
+//        Configuration.setJsonConfig(firefoxCapabilities());
+//        new GeckoDriver();
         WebDriver.get().window().maximize();
         WebDriver.get().timeouts().set().implicitWait(Duration.ofSeconds(20));
         WebDriver.get().timeouts().set().pageLoad(Duration.ofSeconds(20));
@@ -75,5 +80,25 @@ public class TestBaseTestNG {
                 )
                 .addPrefs(prefs)
                 .addExtra("excludeSwitches", new String[]{"enable-automation"}).build();
+    }
+
+    public String firefoxCapabilities() {
+        Map<String, Object> prefs = new HashMap<>();
+        prefs.put("dom.webnotifications.enabled", false);  // Disable notifications popup
+        prefs.put("browser.download.dir", "/path/to/download/folder");  // Set default download directory
+        prefs.put("browser.download.folderList", 2);  // Use custom download location (2 = custom, 1 = desktop)
+        prefs.put("browser.download.useDownloadDir", true);
+        prefs.put("browser.helperApps.neverAsk.saveToDisk", "application/pdf");  // Automatically download PDFs without confirmation
+        prefs.put("pdfjs.disabled", true);  // Disable the built-in PDF viewer
+
+        return new FireFoxCapabilities()
+                .addArguments(
+                        "-private",  // Open Firefox in private browsing mode
+                        "--width=1080",  // Set window width
+                        "--height=480"  // Set window height
+                )
+                .addPrefs(prefs)
+                .addExtra("excludeSwitches", new String[]{"enable-automation"})  // If there are any additional capabilities to set
+                .build();
     }
 }

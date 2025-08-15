@@ -15,6 +15,27 @@ public final class JsonParser {
         throw new IllegalArgumentException("Invalid JSON string.");
     }
 
+    public static List<Object> parseArray(String jsonString) {
+        jsonString = jsonString.trim();
+        if (jsonString.startsWith("[")) {
+            return parseArrayElements(jsonString);
+        } else if (jsonString.startsWith("{")) {
+            throw new IllegalArgumentException("Input is an object, not an array.");
+        }
+        throw new IllegalArgumentException("Invalid JSON string.");
+    }
+
+    private static List<Object> parseArrayElements(String jsonString) {
+        List<Object> list = new ArrayList<>();
+        jsonString = jsonString.substring(1, jsonString.length() - 1).trim(); // Remove outer brackets
+        String[] values = splitJson(jsonString);
+
+        for (String value : values) {
+            list.add(parseValue(value.trim()));
+        }
+        return list;
+    }
+
     private static LinkedHashMap<String, Object> parseObject(String jsonString) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         jsonString = jsonString.substring(1, jsonString.length() - 1).trim(); // Remove outer braces
@@ -45,7 +66,7 @@ public final class JsonParser {
         }
     }
 
-    private static List<Object> parseArray(String jsonString) {
+    private static List<Object> parseArrayInternal(String jsonString) {
         List<Object> list = new ArrayList<>();
         jsonString = jsonString.substring(1, jsonString.length() - 1).trim(); // Remove outer brackets
         String[] values = splitJson(jsonString);

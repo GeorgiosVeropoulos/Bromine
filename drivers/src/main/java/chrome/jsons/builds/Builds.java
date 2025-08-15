@@ -1,18 +1,16 @@
 package chrome.jsons.builds;
 
-import lombok.Getter;
+import java.util.LinkedHashMap;
 
-import java.util.List;
-
-@Getter
-public class Builds {
-
-    List<Build> builds;
-
-    public Builds() {}
+public class Builds extends LinkedHashMap<String, Build> {
 
 
-    public Builds(List<Build> builds) {
-        this.builds = builds;
+    public Builds() {
+        super();
     }
+
+    public Build getBuild(String version) {
+        return this.get(version);
+    }
+
 }

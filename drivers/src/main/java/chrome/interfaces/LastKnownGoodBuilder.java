@@ -5,8 +5,11 @@ import chrome.enums.SupportedChannels;
 
 import java.nio.file.Path;
 
-public non-sealed interface LastKnownGoodBuilder extends EndPointBuilder {
-    LastKnownGoodBuilder withBinary(SupportedBinaries binary);
+public non-sealed interface LastKnownGoodBuilder extends ChromeForTestingEndPointBuilder<LastKnownGoodBuilder> {
+
+    /**
+     * The specific channel we want to fetch.
+     * @see SupportedChannels
+     */
     LastKnownGoodBuilder withChannel(SupportedChannels channel);
-    LastKnownGoodBuilder downloadTo(Path path);
 }

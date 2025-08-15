@@ -1,6 +1,7 @@
 package chrome.jsons;
 
 import chrome.ChromeSupport;
+import chrome.enums.SupportedBinaries;
 import json.annotations.JsonName;
 import lombok.Getter;
 
@@ -47,6 +48,14 @@ public class Downloads {
      */
     public DownloadInfo getHeadlessShellInfoByPlatform() {
         return getInfoByPlatform(headlessShell, ChromeSupport.getCurrentPlatform().getPlatform());
+    }
+
+    public DownloadInfo getInfoByBinary(SupportedBinaries binary) {
+        return switch (binary) {
+            case CHROME -> getChromeInfoByPlatform();
+            case CHROMEDRIVER -> getChromedriverInfoByPlatform();
+            case CHROME_HEADLESS_SHELL -> getHeadlessShellInfoByPlatform();
+        };
     }
 
 }

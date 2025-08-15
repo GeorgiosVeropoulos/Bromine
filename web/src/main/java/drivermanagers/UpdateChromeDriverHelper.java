@@ -11,7 +11,7 @@ import net.GetJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.bromine.utils.platform.Platform;
-import org.bromine.utils.zip.ZipHelper;
+import org.bromine.utils.files.Extract;
 
 import java.io.*;
 import java.net.*;
@@ -106,7 +106,7 @@ public class UpdateChromeDriverHelper extends UpdateDriverHelper {
                 .execute();
 
         // Step 2: Unzip and replace the ChromeDriver binary
-        ZipHelper.unzip(download, download.getParent());
+        Extract.unzip(download, download.getParent());
 
         // Step 3: Set the executable permission for the binary
         setExecutablePermission(DRIVERS_PACKAGE.resolve(driverFileName));

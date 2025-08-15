@@ -4,7 +4,6 @@ import capabilities.Configuration;
 import chrome.*;
 import chrome.enums.SupportedBinaries;
 import chrome.enums.SupportedChannels;
-import chrome.enums.SupportedEndPoints;
 import chrome.jsons.DownloadInfo;
 import chrome.jsons.Downloads;
 import chrome.jsons.LastKnownGoodVersionsWithDownloads;
@@ -12,8 +11,12 @@ import chrome.jsons.channels.Channel;
 import conditions.Be;
 import conditions.Have;
 import elements.*;
+import firefox.GeckoDownloader;
+import firefox.jsons.Release;
 import lombok.extern.slf4j.Slf4j;
 import net.GetJson;
+import org.bromine.utils.platform.Platform;
+import org.bromine.utils.files.Extract;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pages.Page;
@@ -23,8 +26,7 @@ import testbase.TestBaseTestNG;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
-
-import static elements.WebElementsFactory.$$;
+import java.util.List;
 
 @Slf4j
 public class TestingWaiters extends TestBaseTestNG {
@@ -110,12 +112,34 @@ public class TestingWaiters extends TestBaseTestNG {
     @Test
     public void getLatestPathVersionsPerBuildWithDownloadsJson() {
 
-        Path path1 = Downloader.builderFor()
+        Downloader.builderFor()
                 .latestVersionsPerMilestoneWithDownloads()
-                .withBinary(SupportedBinaries.CHROMEDRIVER)
-//               .withMilestone("114")
-                .withMilestone("134")
                 .execute();
 
+        Path path1 = Downloader.builderFor()
+                .latestPathVersionsPerBuildWithDownloads()
+                .withBinary(SupportedBinaries.CHROMEDRIVER)
+//               .withMilestone("114")
+//                .withBuild("113.0.5672")
+//                .withBuild("114.0.5696")
+                .withBuild("115.0.5785")
+                .execute();
+
+    }
+
+    @Test
+    public void testGecko() {
+        List<Release> releases = GeckoDownloader.getReleases();
+        Release release = releases.get(0);
+        Path path = release.getGeckoDriver();
+        Extract.file(path, path.getParent());
+
+
+        System.out.println("");
+    }
+
+    @Test
+    public void geckoDriverTest() {
+        Sleep.with(Duration.ofSeconds(10));
     }
 }

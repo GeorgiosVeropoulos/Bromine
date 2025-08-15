@@ -4,10 +4,14 @@ import chrome.enums.SupportedChannels;
 import chrome.enums.SupportedBinaries;
 import chrome.interfaces.EndpointSelector;
 import chrome.interfaces.LastKnownGoodBuilder;
+import chrome.interfaces.LatestPathVersionsPerBuildBuilder;
 import chrome.interfaces.LatestVersionsPerMilestoneBuilder;
 import chrome.jsons.DownloadInfo;
 import chrome.jsons.LastKnownGoodVersionsWithDownloads;
+import chrome.jsons.LatestPatchVersionsPerBuildWithDownloads;
 import chrome.jsons.LatestVersionsPerMilestoneWithDownloads;
+import chrome.jsons.builds.Build;
+import chrome.jsons.builds.Builds;
 import chrome.jsons.channels.Channel;
 import chrome.jsons.channels.Channels;
 import chrome.jsons.milestones.Milestone;
@@ -42,6 +46,11 @@ public class Downloader {
             @Override
             public LatestVersionsPerMilestoneBuilder latestVersionsPerMilestoneWithDownloads() {
                 return new LatestVersionsPerMilestoneBuilderImpl();
+            }
+
+            @Override
+            public LatestPathVersionsPerBuildBuilder latestPathVersionsPerBuildWithDownloads() {
+                return new LatestPathVersionsPerBuildBuilderImpl();
             }
         };
     }
@@ -83,24 +92,8 @@ public class Downloader {
                 case DEV -> channels.getDev();
                 case CANARY -> channels.getCanary();
             };
-
-            String fileName;
-            DownloadInfo info = switch (binary) {
-                case CHROME -> {
-                    fileName = getCurrentPlatform().getChromeZip();
-                    yield selectedChannel.getDownloads().getChromeInfoByPlatform();
-                }
-                case CHROMEDRIVER -> {
-                    fileName = getCurrentPlatform().getChromedriverZip();
-                    yield selectedChannel.getDownloads().getChromedriverInfoByPlatform();
-                }
-                case CHROME_HEADLESS_SHELL -> {
-                    fileName = getCurrentPlatform().getChromeHeadlessShellZip();
-                    yield selectedChannel.getDownloads().getHeadlessShellInfoByPlatform();
-                }
-                default -> throw new UnsupportedOperationException("No Binary exists for such operation!");
-            };
-
+            DownloadInfo info = selectedChannel.getDownloads().getInfoByBinary(binary);
+            String fileName = getCurrentPlatform().getZipByBinary(binary);
             finalPath = downloadTo.resolve(fileName);
             HttpHelper.downloadTo(info.getUrl(), downloadTo.resolve(fileName));
             return finalPath;
@@ -144,25 +137,62 @@ public class Downloader {
             Milestone m = data.getMilestone(milestone);
 
             String fileName;
-            DownloadInfo info = switch (binary) {
-                case CHROME -> {
-                    fileName = getCurrentPlatform().getChromeZip();
-                    yield m.getDownloads().getChromeInfoByPlatform();
-                }
-                case CHROMEDRIVER -> {
-                    fileName = getCurrentPlatform().getChromedriverZip();
-                    yield m.getDownloads().getChromedriverInfoByPlatform();
-                }
-                case CHROME_HEADLESS_SHELL -> {
-                    fileName = getCurrentPlatform().getChromeHeadlessShellZip();
-                    yield m.getDownloads().getHeadlessShellInfoByPlatform();
-                }
-                default -> throw new UnsupportedOperationException("No Binary exists for such operation!");
-            };
+            DownloadInfo info = m.getDownloads().getInfoByBinary(binary);
+            fileName = getCurrentPlatform().getZipByBinary(binary);
             downloadTo = Paths.get(downloadTo.toString(), milestone);
             finalPath = downloadTo.resolve(fileName);
             if (info == null) {
                 throw new IllegalArgumentException("There is no info for " + binary.getBinary() + " for milestone: " + milestone);
+            }
+            HttpHelper.downloadTo(info.getUrl(), downloadTo.resolve(fileName));
+            return finalPath;
+        }
+    }
+
+    private static class LatestPathVersionsPerBuildBuilderImpl implements LatestPathVersionsPerBuildBuilder {
+        // implement methods returning this
+        private SupportedBinaries binary;
+        private String build;
+        private Path downloadTo = Paths.get("target", "downloads", "build");
+        private LatestPathVersionsPerBuildBuilderImpl(){
+
+        }
+
+        @Override
+        public LatestPathVersionsPerBuildBuilder withBinary(SupportedBinaries binary) {
+            this.binary = binary;
+            return this;
+        }
+
+        @Override
+        public LatestPathVersionsPerBuildBuilder withBuild(String build) {
+            this.build = build;
+            return this;
+        }
+
+        @Override
+        public LatestPathVersionsPerBuildBuilder downloadTo(Path path) {
+            this.downloadTo = path;
+            return this;
+        }
+
+
+        @Override
+        public Path execute() {
+            if (binary == null) {
+                throw new IllegalArgumentException("Binary must be set in order to download");
+            }
+            LatestPatchVersionsPerBuildWithDownloads data = GetJson.getLatestPathVersionsPerBuildWithDownloadsJson();
+
+            Build build = data.getBuilds().getBuild(this.build);
+
+            String fileName;
+            DownloadInfo info = build.getDownloads().getInfoByBinary(binary);
+            fileName = getCurrentPlatform().getZipByBinary(binary);
+            downloadTo = Paths.get(downloadTo.toString(), this.build);
+            finalPath = downloadTo.resolve(fileName);
+            if (info == null) {
+                throw new IllegalArgumentException("There is no info for " + binary.getBinary() + " for build: " + this.build);
             }
             HttpHelper.downloadTo(info.getUrl(), downloadTo.resolve(fileName));
             return finalPath;

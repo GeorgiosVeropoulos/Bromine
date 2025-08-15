@@ -20,7 +20,7 @@ public class HttpHelper {
 
 
 
-    protected static String get(String urlToGoTo) {
+    public static String get(String urlToGoTo) {
         StringBuilder response = new StringBuilder();
 
         try {

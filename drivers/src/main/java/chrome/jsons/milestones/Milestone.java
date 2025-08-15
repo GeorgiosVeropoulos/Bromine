@@ -1,6 +1,8 @@
 package chrome.jsons.milestones;
 
 import chrome.Version;
+import chrome.enums.SupportedBinaries;
+import chrome.jsons.DownloadInfo;
 import chrome.jsons.Downloads;
 import lombok.Getter;
 import lombok.Setter;

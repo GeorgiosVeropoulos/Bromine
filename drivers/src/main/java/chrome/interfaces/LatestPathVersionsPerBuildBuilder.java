@@ -4,9 +4,13 @@ import chrome.enums.SupportedBinaries;
 
 import java.nio.file.Path;
 
-public non-sealed interface LatestPathVersionsPerBuildBuilder extends EndPointBuilder {
+public non-sealed interface LatestPathVersionsPerBuildBuilder extends ChromeForTestingEndPointBuilder<LatestPathVersionsPerBuildBuilder> {
 
-    LatestPathVersionsPerBuildBuilder withBinary(SupportedBinaries binary);
+
+    /**
+     * The specific build we want to download.
+     * <p>It must be on this format {@code {major}.{minor}.{build}}</p>
+     * @param build example: 115.0.5785
+     */
     LatestPathVersionsPerBuildBuilder withBuild(String build);
-    LatestPathVersionsPerBuildBuilder downloadTo(Path path);
 }

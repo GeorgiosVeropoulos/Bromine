@@ -15,4 +15,12 @@ public enum SupportedPlatforms {
     private final String chromeZip;
     private final String chromedriverZip;
     private final String chromeHeadlessShellZip;
+
+    public String getZipByBinary(SupportedBinaries binary) {
+        return switch (binary) {
+            case CHROME -> chromeZip;
+            case CHROMEDRIVER -> chromedriverZip;
+            case CHROME_HEADLESS_SHELL -> chromeHeadlessShellZip;
+        };
+    }
 }

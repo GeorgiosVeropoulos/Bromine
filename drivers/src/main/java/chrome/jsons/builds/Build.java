@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 public class Build {
 
-    String version;
-    String revision;
-    Downloads downloads;
+    protected String version;
+    protected String revision;
+    protected Downloads downloads;
 
     public Build() {}
 
