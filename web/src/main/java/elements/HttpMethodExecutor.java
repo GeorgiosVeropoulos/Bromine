@@ -3,6 +3,7 @@ package elements;
 import capabilities.Configuration;
 import json.JsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.bromine.annotations.UnderDevelopment;
 import org.bromine.utils.net.HttpMethod;
 import org.bromine.utils.net.HttpResponseHandler;
 import org.bromine.utils.net.HttpUtil;
@@ -12,10 +13,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * !!!UNDER CONSTRUCTION!!!
- */
 @Slf4j
+@UnderDevelopment
 public class HttpMethodExecutor {
 
 

@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    if: contains(github.event.pull_request.title, '[test]')  # Check if PR title contains [b]
+    if: github.event_name == 'push' || contains(github.event.pull_request.title, '[test]') # only run on pr title or commit of push contains ['test']
     runs-on: ubuntu-latest
 
     steps:

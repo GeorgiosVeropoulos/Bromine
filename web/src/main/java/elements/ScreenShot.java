@@ -3,8 +3,8 @@ package elements;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bromine.utils.net.Response;
-import org.bromine.annotations.CheckForNull;
 import org.bromine.annotations.ThreadSafe;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.helpers.CheckReturnValue;
 
 import java.io.FileOutputStream;
@@ -41,7 +41,7 @@ public class ScreenShot {
     }
 
     @CheckReturnValue
-    @CheckForNull
+    @Nullable
     public static Path takeScreenShot() {
         return getScreenShot(EndPoints.buildEndpoint(EndPoints.TAKE_SCREENSHOT));
     }
@@ -52,13 +52,13 @@ public class ScreenShot {
      * @return the Path the screenshot was saved or null if we can't determine the WebElement exists.
      */
     @CheckReturnValue
-    @CheckForNull
+    @Nullable
     public static Path takeScreenShot(WebElement webElement) {
         SearchContext context = webElement.getSearchContext();
-        if (context == null) {
+//        if (context == null) {
             //element couldn't be found this method will return null
-            return null;
-        }
+//            return null;
+//        }
         return getScreenShot(EndPoints.buildEndpoint(EndPoints.TAKE_ELEMENT_SCREENSHOT, context.elementId()));
     }
 

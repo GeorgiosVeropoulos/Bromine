@@ -1,23 +1,20 @@
 package elements;
 
-import org.bromine.annotations.CanThrow;
 import conditions.Condition;
 import enums.LocatorType;
 import exceptions.*;
-import org.bromine.annotations.CheckForNull;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.helpers.CheckReturnValue;
 
-@CanThrow({
-        NoSuchElementException.class,
-        StaleElementReferenceException.class,
-        WebDriverException.class})
+
 public interface WebElement {
 
     /**
      * Clicks the WElement (this will mimick a normal user click as described by)
      * @link <a href="https://www.w3.org/TR/webdriver/#dfn-element-click">w3.org.click</a>
+     * @throws ElementClickInterceptedException if the click fails to be sent to the browser
      */
-    @CanThrow(ElementClickInterceptedException.class)
     void click();
 
     /**
@@ -68,12 +65,12 @@ public interface WebElement {
      * @return the result of the search or empty string
      */
     @CheckReturnValue
-    String getAttribute(String attributeName);
+    @Nullable
+    String getAttribute(@NonNull String attributeName);
 
     String getProperty(String propertyName);
 
     /**
-     *
      * @return true if element is visible / false if it isn't
      */
     boolean isDisplayed();
@@ -118,7 +115,7 @@ public interface WebElement {
      * @return the located elementName:elementId . <p>!!! if the element can't be found in the current dom this will return {@code null}</p>
      */
     @CheckReturnValue
-    @CheckForNull
+    @Nullable
     SearchContext getSearchContext();
 
     /**
@@ -129,12 +126,10 @@ public interface WebElement {
 
 
     /**
-     * Will wait for the {@link Condition} to be true.
-     * <p>If the condition is not met a {@link TimeOutException} will be thrown with the cause being the reason this happened if it exists!</p>
-     * @param conditionToBe
-     * @return
+     * Will wait for the {@link Condition} to be.
+     * @throws TimeOutException if the expired time is reached
+     * @throws WebDriverException for any generic error!
      */
-    @CanThrow({TimeOutException.class})
     WebElement waitTo(Condition conditionToBe) throws TimeOutException, WebDriverException;
 
 //    WebElement waitToHave(ToHave toHave);

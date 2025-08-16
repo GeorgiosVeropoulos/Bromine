@@ -2,6 +2,7 @@ package elements;
 
 import assertions.Verify;
 import conditions.Condition;
+import exceptions.ElementClickInterceptedException;
 import json.JsonBuilder;
 import json.JsonParser;
 import org.bromine.utils.net.Response;

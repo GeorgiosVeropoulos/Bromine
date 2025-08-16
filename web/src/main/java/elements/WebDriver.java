@@ -1,9 +1,9 @@
 package elements;
 
 import lombok.NonNull;
-import org.bromine.annotations.CheckForNull;
 import org.bromine.annotations.WillClose;
 import org.bromine.annotations.ThreadSafe;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.Set;
@@ -64,7 +64,7 @@ public abstract class WebDriver {
         DriverClient.openURL(url);
     }
 
-    @CheckForNull
+    @Nullable
     public String getTitle() {
         return DriverClient.title();
     }
