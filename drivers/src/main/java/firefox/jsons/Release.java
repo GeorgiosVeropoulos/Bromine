@@ -43,6 +43,7 @@ public class Release {
     }
 
     public Path getGeckoDriver() {
+        Platform.OperatingSystem os = Platform.OperatingSystem.current();
         Platform.Architecture arch = Platform.getArchitecture();
         String url = null;
         String fileName = "geckodriver";
@@ -53,27 +54,13 @@ public class Release {
                 continue; // Skip signature files
             }
 
-            // Match OS
-            if (Platform.isLinux()) {
-                if (arch == Platform.Architecture.ARM64 && url.contains("aarch64")) {
-                    fileName = fileName.concat(".tar.gz");
-                    break;
-                } else if (arch == Platform.Architecture.X64 && url.contains("64") && !url.contains("aarch64")) {
-                    fileName = fileName.concat(".tar.gz");
-                    break;
-                } else if (arch == Platform.Architecture.X86 && url.contains("32")) {
-                    fileName = fileName.concat(".tar.gz");
-                    break;
-                }
-            } else if (Platform.isWindows()) {
-                if (arch == Platform.Architecture.X64 && url.contains("64")) {
-                   break;
-                } else if (arch == Platform.Architecture.X86 && url.contains("32")) {
-                   break;
-                }
-            } else if (Platform.isMac()) {
-               break;
+            if (os.matches(url) && arch.matches(url)) {
+                // URL matches both the current OS and architecture
+                String extension = Platform.isWindows() ? ".zip" : ".tar.gz";
+                fileName = fileName.concat(extension);
+                break;
             }
+
         }
         Path path = Paths.get("target", "downloads", "geckodriver", fileName);
         log.info("Downloading geckodriver from: {}", url);
