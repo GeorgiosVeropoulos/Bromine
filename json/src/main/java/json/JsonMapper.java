@@ -279,63 +279,73 @@ public class JsonMapper<T> {
         throw new IllegalArgumentException("Cannot convert value to Boolean: " + value);
     }
 
+    @SuppressWarnings("unchecked")
     private void handleMapField(T instance, Field field, Object value) throws Exception {
         Class<?> fieldType = field.getType();
         Type genericType = field.getGenericType();
 
-        ParameterizedType mapType = null;
-        Class<?> keyClass = null;
-        Type valueType = null;
+        Type keyType = Object.class;
+        Type valueType = Object.class;
 
+        // 🔹 If the declared type is parameterized directly (e.g. Map<String, ?>)
         if (genericType instanceof ParameterizedType) {
-            mapType = (ParameterizedType) genericType;
-            keyClass = (Class<?>) mapType.getActualTypeArguments()[0];
+            ParameterizedType mapType = (ParameterizedType) genericType;
+            keyType = mapType.getActualTypeArguments()[0];
             valueType = mapType.getActualTypeArguments()[1];
-        } else {
-            // Fallback for non-parameterized Map types
-            keyClass = Object.class;
-            valueType = Object.class;
+        }
+        // 🔹 If it’s a subclass (e.g. Builds extends LinkedHashMap<String, Build>)
+        else if (Map.class.isAssignableFrom(fieldType)) {
+            Type superType = fieldType.getGenericSuperclass();
+            if (superType instanceof ParameterizedType) {
+                ParameterizedType mapType = (ParameterizedType) superType;
+                keyType = mapType.getActualTypeArguments()[0];
+                valueType = mapType.getActualTypeArguments()[1];
+            }
         }
 
         Map<?, ?> rawMap = (Map<?, ?>) value;
-        Map<Object, Object> resultMap = new LinkedHashMap<>();
+
+        //Create instance of declared type (Builds, LinkedHashMap, etc.)
+        Map<Object, Object> resultMap;
+        try {
+            resultMap = (Map<Object, Object>) fieldType.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            resultMap = new LinkedHashMap<>();
+        }
 
         for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
             Object mapKey = entry.getKey();
             Object rawVal = entry.getValue();
 
-            if (rawVal instanceof List && valueType instanceof ParameterizedType) {
+            Object mappedVal = rawVal;
+
+            // Map into the declared valueType
+            if (rawVal instanceof Map && valueType instanceof Class && !isPrimitiveOrWrapper((Class<?>) valueType)) {
+                mappedVal = JsonMapper.of((Class<?>) valueType)
+                        .fromMap((LinkedHashMap<String, Object>) rawVal);
+            }
+            else if (rawVal instanceof List && valueType instanceof ParameterizedType) {
                 ParameterizedType listType = (ParameterizedType) valueType;
                 Class<?> listElementType = (Class<?>) listType.getActualTypeArguments()[0];
 
                 List<Object> typedList = new ArrayList<>();
                 for (Object item : (List<?>) rawVal) {
                     if (item instanceof Map) {
-                        typedList.add(JsonMapper.of(listElementType).fromMap((LinkedHashMap<String, Object>) item));
+                        typedList.add(JsonMapper.of(listElementType)
+                                .fromMap((LinkedHashMap<String, Object>) item));
                     } else {
                         typedList.add(item);
                     }
                 }
-                resultMap.put(mapKey, typedList);
-            } else if (rawVal instanceof Map && valueType instanceof Class) {
-                resultMap.put(mapKey, JsonMapper.of((Class<?>) valueType).fromMap((LinkedHashMap<String, Object>) rawVal));
-            } else {
-                resultMap.put(mapKey, rawVal);
+                mappedVal = typedList;
             }
+
+            resultMap.put(mapKey, mappedVal);
         }
 
-        if (!fieldType.equals(LinkedHashMap.class) && Map.class.isAssignableFrom(fieldType)) {
-            try {
-                Map<Object, Object> typedInstance = (Map<Object, Object>) fieldType.getDeclaredConstructor().newInstance();
-                typedInstance.putAll(resultMap);
-                field.set(instance, typedInstance);
-            } catch (Exception e) {
-                field.set(instance, resultMap);
-            }
-        } else {
-            field.set(instance, resultMap);
-        }
+        field.set(instance, resultMap);
     }
+
 
     private void handleListField(T instance, Field field, Object value) throws Exception {
         ParameterizedType listType = (ParameterizedType) field.getGenericType();

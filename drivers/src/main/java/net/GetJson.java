@@ -20,7 +20,7 @@ public class GetJson extends HttpHelper {
         return JsonMapper.of(LatestVersionsPerMilestoneWithDownloads.class).fromMap(JsonParser.parse(json));
     }
 
-    public static LatestPatchVersionsPerBuildWithDownloads getLatestPathVersionsPerBuildWithDownloadsJson() {
+    public static LatestPatchVersionsPerBuildWithDownloads getLatestPatchVersionsPerBuildWithDownloadsJson() {
         String json = get(SupportedEndPoints.LatestPatchVersionsPerBuildWithDownloads.getUrl());
         return JsonMapper.of(LatestPatchVersionsPerBuildWithDownloads.class).fromMap(JsonParser.parse(json));
     }

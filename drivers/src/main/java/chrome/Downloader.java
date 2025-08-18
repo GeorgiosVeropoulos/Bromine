@@ -4,14 +4,13 @@ import chrome.enums.SupportedChannels;
 import chrome.enums.SupportedBinaries;
 import chrome.interfaces.EndpointSelector;
 import chrome.interfaces.LastKnownGoodBuilder;
-import chrome.interfaces.LatestPathVersionsPerBuildBuilder;
+import chrome.interfaces.LatestPatchVersionsPerBuildBuilder;
 import chrome.interfaces.LatestVersionsPerMilestoneBuilder;
 import chrome.jsons.DownloadInfo;
 import chrome.jsons.LastKnownGoodVersionsWithDownloads;
 import chrome.jsons.LatestPatchVersionsPerBuildWithDownloads;
 import chrome.jsons.LatestVersionsPerMilestoneWithDownloads;
 import chrome.jsons.builds.Build;
-import chrome.jsons.builds.Builds;
 import chrome.jsons.channels.Channel;
 import chrome.jsons.channels.Channels;
 import chrome.jsons.milestones.Milestone;
@@ -49,7 +48,7 @@ public class Downloader {
             }
 
             @Override
-            public LatestPathVersionsPerBuildBuilder latestPathVersionsPerBuildWithDownloads() {
+            public LatestPatchVersionsPerBuildBuilder latestPathVersionsPerBuildWithDownloads() {
                 return new LatestPathVersionsPerBuildBuilderImpl();
             }
         };
@@ -149,7 +148,7 @@ public class Downloader {
         }
     }
 
-    private static class LatestPathVersionsPerBuildBuilderImpl implements LatestPathVersionsPerBuildBuilder {
+    private static class LatestPathVersionsPerBuildBuilderImpl implements LatestPatchVersionsPerBuildBuilder {
         // implement methods returning this
         private SupportedBinaries binary;
         private String build;
@@ -159,19 +158,19 @@ public class Downloader {
         }
 
         @Override
-        public LatestPathVersionsPerBuildBuilder withBinary(SupportedBinaries binary) {
+        public LatestPatchVersionsPerBuildBuilder withBinary(SupportedBinaries binary) {
             this.binary = binary;
             return this;
         }
 
         @Override
-        public LatestPathVersionsPerBuildBuilder withBuild(String build) {
+        public LatestPatchVersionsPerBuildBuilder withBuild(String build) {
             this.build = build;
             return this;
         }
 
         @Override
-        public LatestPathVersionsPerBuildBuilder downloadTo(Path path) {
+        public LatestPatchVersionsPerBuildBuilder downloadTo(Path path) {
             this.downloadTo = path;
             return this;
         }
@@ -182,9 +181,9 @@ public class Downloader {
             if (binary == null) {
                 throw new IllegalArgumentException("Binary must be set in order to download");
             }
-            LatestPatchVersionsPerBuildWithDownloads data = GetJson.getLatestPathVersionsPerBuildWithDownloadsJson();
+            LatestPatchVersionsPerBuildWithDownloads data = GetJson.getLatestPatchVersionsPerBuildWithDownloadsJson();
 
-            Build build = data.getBuilds().getBuild(this.build);
+            Build build = data.getBuilds().get(this.build);
 
             String fileName;
             DownloadInfo info = build.getDownloads().getInfoByBinary(binary);

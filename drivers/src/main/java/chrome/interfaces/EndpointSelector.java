@@ -5,6 +5,6 @@ public interface EndpointSelector {
 
     LastKnownGoodBuilder lastKnownGoodVersions();
     LatestVersionsPerMilestoneBuilder latestVersionsPerMilestoneWithDownloads();
-    LatestPathVersionsPerBuildBuilder latestPathVersionsPerBuildWithDownloads();
+    LatestPatchVersionsPerBuildBuilder latestPathVersionsPerBuildWithDownloads();
 
 }

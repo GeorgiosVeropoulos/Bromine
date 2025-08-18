@@ -4,7 +4,7 @@ import chrome.enums.SupportedBinaries;
 
 import java.nio.file.Path;
 
-public sealed interface ChromeForTestingEndPointBuilder<T extends ChromeForTestingEndPointBuilder<T>> permits LastKnownGoodBuilder, LatestVersionsPerMilestoneBuilder, LatestPathVersionsPerBuildBuilder {
+public sealed interface ChromeForTestingEndPointBuilder<T extends ChromeForTestingEndPointBuilder<T>> permits LastKnownGoodBuilder, LatestVersionsPerMilestoneBuilder, LatestPatchVersionsPerBuildBuilder {
 
     /**
      * The binary to use for the download.

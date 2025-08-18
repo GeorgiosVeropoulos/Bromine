@@ -112,9 +112,9 @@ public class TestingWaiters extends TestBaseTestNG {
     @Test
     public void getLatestPathVersionsPerBuildWithDownloadsJson() {
 
-        Downloader.builderFor()
-                .latestVersionsPerMilestoneWithDownloads()
-                .execute();
+//        Downloader.builderFor()
+//                .latestVersionsPerMilestoneWithDownloads()
+//                .execute();
 
         Path path1 = Downloader.builderFor()
                 .latestPathVersionsPerBuildWithDownloads()
@@ -124,6 +124,7 @@ public class TestingWaiters extends TestBaseTestNG {
 //                .withBuild("114.0.5696")
                 .withBuild("115.0.5785")
                 .execute();
+        Extract.file(path1, path1.getParent());
 
     }
 
